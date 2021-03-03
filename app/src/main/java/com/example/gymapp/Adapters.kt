@@ -10,14 +10,31 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 
-class WorkoutAdapter(mCtx : Context, val workouts : ArrayList<Workouts>) : RecyclerView.Adapter<WorkoutAdapter.ViewHolder>() {
+class WorkoutAdapter(mCtx : Context, val workouts : ArrayList<Workouts>,
+                     private val listener: OnItemClickListener) : RecyclerView.Adapter<WorkoutAdapter.ViewHolder>() {
 
     val mCtx = mCtx
 
-    class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView),
+    View.OnClickListener {
         val txtWorkoutName = itemView.findViewById<TextView>(R.id.workoutName)
         val btnUpdate = itemView.findViewById<ImageView>(R.id.btnUpdate)
         val btnDelete = itemView.findViewById<ImageView>(R.id.btnDelete)
+
+        init {
+            itemView.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            val position = adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                listener.onItemClick(adapterPosition)
+            }
+        }
+    }
+
+    interface OnItemClickListener {
+        fun onItemClick(position: Int)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkoutAdapter.ViewHolder {

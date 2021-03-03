@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
  * Use the [WorkoutFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class WorkoutFragment : Fragment() {
+class WorkoutFragment : Fragment(), WorkoutAdapter.OnItemClickListener {
 
 
     override fun onCreateView(
@@ -46,10 +46,19 @@ class WorkoutFragment : Fragment() {
         val mContext = context
     }
 
+    override fun onItemClick(position: Int) {
+        val applicationContext = requireContext().applicationContext
+        val workoutsList : ArrayList<Workouts> =  MainActivity.databaseHandler.getWorkouts(applicationContext)
+        val adapter =  WorkoutAdapter(applicationContext, workoutsList, this)
+        val clickedItem : Workouts = workoutsList[position]
+        Toast.makeText(applicationContext, "Item $position clicked", Toast.LENGTH_SHORT).show()
+        Toast.makeText(applicationContext, "workoutid ${clickedItem.workoutsID} clicked", Toast.LENGTH_SHORT).show()
+    }
+
     private fun viewWorkouts(){
         val applicationContext = requireContext().applicationContext
         val workoutsList : ArrayList<Workouts> =  MainActivity.databaseHandler.getWorkouts(applicationContext)
-        val adapter =  WorkoutAdapter(applicationContext, workoutsList)
+        val adapter =  WorkoutAdapter(applicationContext, workoutsList, this)
         val rv : RecyclerView = requireView().findViewById(R.id.rvItemsList)
         rv.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, true ) as RecyclerView.LayoutManager
         rv.adapter = adapter
@@ -66,7 +75,7 @@ class WorkoutFragment : Fragment() {
                 MainActivity.databaseHandler.addWorkout(applicationContext, workouts)
             }
 
-            Toast.makeText(applicationContext, name, Toast.LENGTH_LONG).show()
+            Toast.makeText(applicationContext, name, Toast.LENGTH_SHORT).show()
             etName?.text?.clear()
 
         } else {
