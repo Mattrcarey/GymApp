@@ -9,3 +9,8 @@ class Exercises{
     var exerciseID : Int = 0
     var exerciseName : String = ""
 }
+
+class Links{
+    var wid : Int = 0
+    var eid : Int = 0
+}

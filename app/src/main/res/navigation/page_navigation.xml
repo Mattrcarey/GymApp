@@ -15,7 +15,12 @@
         android:id="@+id/workoutFragment"
         android:name="com.example.gymapp.WorkoutFragment"
         android:label="Workouts"
-        tools:layout="@layout/fragment_workout" />
+        tools:layout="@layout/fragment_workout" >
+        <action
+            android:id="@+id/action_workoutFragment_to_workoutSetup"
+            app:destination="@id/addEToW" />
+    </fragment>
+
     <fragment
         android:id="@+id/exerciseFragment"
         android:name="com.example.gymapp.ExerciseFragment"
@@ -26,6 +31,20 @@
         android:name="com.example.gymapp.runFragment"
         android:label="Run"
         tools:layout="@layout/fragment_run" />
+    <fragment
+        android:id="@+id/addEToW"
+        android:name="com.example.gymapp.WorkoutSetup"
+        android:label="fragment_add_e_to_w"
+        tools:layout="@layout/fragment_workout_setup" >
+        <action
+            android:id="@+id/action_workoutSetup_to_addEToW"
+            app:destination="@id/addNewEToW" />
+    </fragment>
+    <fragment
+        android:id="@+id/addNewEToW"
+        android:name="com.example.gymapp.addNewEToW"
+        android:label="fragment_add_new_e_to_w"
+        tools:layout="@layout/fragment_add_e_to_w" />
 
 
 </navigation>

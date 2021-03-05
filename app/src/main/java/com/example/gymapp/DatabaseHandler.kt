@@ -76,6 +76,18 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         db.close()
     }
 
+    fun addLink(mCtx: Context, links: Links){
+        val db = this.writableDatabase
+
+        val contentValues = ContentValues()
+        contentValues.put(COLUMN_WORKOUTID, links.wid)
+        contentValues.put(COLUMN_EXERCISEID, links.eid)
+
+        val success = db.insert(TABLE_LINKINGTABLE, null, contentValues)
+
+        db.close()
+    }
+
     fun getWorkouts(mCtx : Context) : ArrayList<Workouts>{
         val qry = "SELECT * FROM $TABLE_WORKOUTS"
         val db = this.readableDatabase
@@ -118,5 +130,28 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         return exercises
     }
 
-    //TODO add other databases
+    fun getExercises(mCtx: Context, WID : Int) : ArrayList<Exercises> {
+        //TODO sql statement to select all from linking table with workoutID = WID then get all exercises
+        val qry = "SELECT $TABLE_EXERCISES.$COLUMN_EXERCISEID, $COLUMN_EXERCISENAME FROM $TABLE_EXERCISES, $TABLE_LINKINGTABLE "+
+                "WHERE $TABLE_LINKINGTABLE.$COLUMN_WORKOUTID = $WID " +
+                "AND $TABLE_LINKINGTABLE.$COLUMN_EXERCISEID = $TABLE_EXERCISES.$COLUMN_EXERCISEID"
+        val db = this.readableDatabase
+        val cursor = db.rawQuery(qry, null)
+        val exercises = ArrayList<Exercises>()
+
+        if (cursor.count == 0)
+            Toast.makeText(mCtx, "No Records Found", Toast.LENGTH_SHORT).show() else
+        {while (cursor.moveToNext()){
+            val exercise = Exercises()
+            exercise.exerciseID = cursor.getInt(cursor.getColumnIndex(COLUMN_EXERCISEID))
+            exercise.exerciseName = cursor.getString(cursor.getColumnIndex(COLUMN_EXERCISENAME))
+            exercises.add(exercise)
+        }
+            Toast.makeText(mCtx, "${cursor.count.toString()} Records Found", Toast.LENGTH_SHORT).show()
+        }
+        cursor.close()
+        db.close()
+        return exercises
+    }
+
 }
