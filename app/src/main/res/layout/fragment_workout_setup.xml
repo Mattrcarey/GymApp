@@ -6,8 +6,6 @@
     android:orientation="vertical"
     tools:context=".WorkoutSetup">
 
-
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvItemsList"
         android:layout_width="match_parent"

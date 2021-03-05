@@ -31,7 +31,6 @@
             android:hint="Enter Exercise Name" />
     </LinearLayout>
 
-
     <Button
         android:id="@+id/btnAdd"
         android:layout_width="match_parent"
