@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 
@@ -88,6 +89,7 @@ class AddExerciseAdapter(mCtx : Context, val exercises : ArrayList<Exercises>,
 
     var ischecked : BooleanArray? = null
     val mCtx = mCtx
+    var parent : ViewGroup? = null
 
     inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         val txtExerciseName = itemView.findViewById<TextView>(R.id.exerciseName)
@@ -102,18 +104,20 @@ class AddExerciseAdapter(mCtx : Context, val exercises : ArrayList<Exercises>,
             val position = adapterPosition
             if (position != RecyclerView.NO_POSITION) {
                 ischecked?.set(position, !ischecked!![position])
-                //checkbox(this,position)
                 listener.onItemClick(adapterPosition)
+                checkbox(this,position)
             }
         }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddExerciseAdapter.ViewHolder {
         val v : View = LayoutInflater.from(parent.context).inflate(R.layout.lo_add_exercises,parent, false)
+        this.parent = parent
         return ViewHolder(v)
     }
 
     fun checkbox (holder: ViewHolder, position: Int) {
+        (parent as RecyclerView).layoutManager
         if (ischecked?.get(position) == true) {
             holder.checked.visibility = View.VISIBLE
         }
@@ -125,12 +129,6 @@ class AddExerciseAdapter(mCtx : Context, val exercises : ArrayList<Exercises>,
     override fun onBindViewHolder(holder: AddExerciseAdapter.ViewHolder, position: Int) {
         val exercise : Exercises = exercises[position]
         holder.txtExerciseName.text = exercise.exerciseName
-//        if (ischecked?.get(position) == true) {
-//            holder.checked.visibility = View.VISIBLE
-//        }
-//        else {
-//            holder.checked.visibility = View.GONE
-//        }
     }
 
     override fun getItemCount(): Int {

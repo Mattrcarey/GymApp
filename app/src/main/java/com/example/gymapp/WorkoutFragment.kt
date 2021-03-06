@@ -72,7 +72,7 @@ class WorkoutFragment : Fragment(), OnItemClickListener {
         val workoutsList : ArrayList<Workouts> =  MainActivity.databaseHandler.getWorkouts(applicationContext)
         val adapter =  WorkoutAdapter(applicationContext, workoutsList, this)
         val rv : RecyclerView = requireView().findViewById(R.id.rvItemsList)
-        rv.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, true ) as RecyclerView.LayoutManager
+        rv.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false ) as RecyclerView.LayoutManager
         rv.adapter = adapter
     }
 

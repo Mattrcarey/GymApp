@@ -70,7 +70,7 @@ class WorkoutSetup : Fragment() {
         val exercisesList : ArrayList<Exercises> =  MainActivity.databaseHandler.getExercises(applicationContext, WID)
         val adapter =  ExerciseAdapter(applicationContext, exercisesList)
         val rv : RecyclerView = requireView().findViewById(R.id.rvItemsList)
-        rv.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, true ) as RecyclerView.LayoutManager
+        rv.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false ) as RecyclerView.LayoutManager
         rv.adapter = adapter
     }
 

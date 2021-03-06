@@ -66,27 +66,21 @@ class addNewEToW : Fragment(), OnItemClickListener {
 
     override fun onItemClick(position: Int) {
         selected?.set(position, !selected?.get(position)!!)
-        //TODO change checked state
     }
 
-    private fun getExercises(){
-        //TODO get the list of exercises and save it
-    }
 
     private fun viewExercises(){
         val applicationContext = requireContext().applicationContext
         val exercisesList : ArrayList<Exercises> =  MainActivity.databaseHandler.getExercises(applicationContext)
-        //TODO convert list of exercises to ADDexercises with checked state
         val adapter =  AddExerciseAdapter(applicationContext, exercisesList, this)
         val rv : RecyclerView = requireView().findViewById(R.id.rvItemsList)
-        rv.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, true ) as RecyclerView.LayoutManager
+        rv.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false ) as RecyclerView.LayoutManager
         rv.adapter = adapter
         selected = BooleanArray(adapter.itemCount)
         selectedID = exercisesList
     }
 
     private fun addRecord() {
-        //TODO add new exercise to the list of exercises
         val applicationContext = activity?.applicationContext
         val etName = view?.findViewById<EditText>(R.id.etName)
         val name = etName?.text.toString()
