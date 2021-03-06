@@ -10,6 +10,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 
+interface OnItemClickListener {
+    fun onItemClick(position: Int)
+}
+
 class WorkoutAdapter(mCtx : Context, val workouts : ArrayList<Workouts>,
                      private val listener: OnItemClickListener) : RecyclerView.Adapter<WorkoutAdapter.ViewHolder>() {
 
@@ -31,10 +35,6 @@ class WorkoutAdapter(mCtx : Context, val workouts : ArrayList<Workouts>,
                 listener.onItemClick(adapterPosition)
             }
         }
-    }
-
-    interface OnItemClickListener {
-        fun onItemClick(position: Int)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WorkoutAdapter.ViewHolder {
@@ -79,5 +79,65 @@ class ExerciseAdapter(mCtx : Context, val exercises : ArrayList<Exercises>) : Re
     override fun getItemCount(): Int {
         return exercises.size
     }
+}
+
+
+class AddExerciseAdapter(mCtx : Context, val exercises : ArrayList<Exercises>,
+                         private val listener: OnItemClickListener) : RecyclerView.Adapter<AddExerciseAdapter.ViewHolder>() {
+
+
+    var ischecked : BooleanArray? = null
+    val mCtx = mCtx
+
+    inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+        val txtExerciseName = itemView.findViewById<TextView>(R.id.exerciseName)
+        val checked = itemView.findViewById<ImageView>(R.id.checked)
+
+        init {
+            itemView.setOnClickListener(this)
+            ischecked = BooleanArray(itemCount)
+        }
+
+        override fun onClick(v: View?) {
+            val position = adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                ischecked?.set(position, !ischecked!![position])
+                //checkbox(this,position)
+                listener.onItemClick(adapterPosition)
+            }
+        }
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AddExerciseAdapter.ViewHolder {
+        val v : View = LayoutInflater.from(parent.context).inflate(R.layout.lo_add_exercises,parent, false)
+        return ViewHolder(v)
+    }
+
+    fun checkbox (holder: ViewHolder, position: Int) {
+        if (ischecked?.get(position) == true) {
+            holder.checked.visibility = View.VISIBLE
+        }
+        else {
+            holder.checked.visibility = View.GONE
+        }
+    }
+
+    override fun onBindViewHolder(holder: AddExerciseAdapter.ViewHolder, position: Int) {
+        val exercise : Exercises = exercises[position]
+        holder.txtExerciseName.text = exercise.exerciseName
+//        if (ischecked?.get(position) == true) {
+//            holder.checked.visibility = View.VISIBLE
+//        }
+//        else {
+//            holder.checked.visibility = View.GONE
+//        }
+    }
+
+    override fun getItemCount(): Int {
+        return exercises.size
+    }
+
 
 }
+
+

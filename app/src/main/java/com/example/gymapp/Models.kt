@@ -8,6 +8,7 @@ class Workouts{
 class Exercises{
     var exerciseID : Int = 0
     var exerciseName : String = ""
+    var isChecked: Boolean = false
 }
 
 class Links{

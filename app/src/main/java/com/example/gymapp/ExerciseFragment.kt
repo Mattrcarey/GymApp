@@ -66,14 +66,14 @@ class ExerciseFragment : Fragment() {
                 MainActivity.databaseHandler.addExercise(applicationContext, exercises)
             }
 
-            Toast.makeText(applicationContext, name, Toast.LENGTH_LONG).show()
+            Toast.makeText(applicationContext, "$name added", Toast.LENGTH_LONG).show()
             etName?.text?.clear()
 
         } else {
             Toast.makeText(
                     applicationContext,
                     "Name cannot be blank",
-                    Toast.LENGTH_LONG
+                    Toast.LENGTH_SHORT
             ).show()
         }
         viewExercises()

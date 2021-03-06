@@ -20,7 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
  * Use the [WorkoutFragment.newInstance] factory method to
  * create an instance of this fragment.
  */
-class WorkoutFragment : Fragment(), WorkoutAdapter.OnItemClickListener {
+class WorkoutFragment : Fragment(), OnItemClickListener {
 
 
     private var navController : NavController ?= null
@@ -65,8 +65,6 @@ class WorkoutFragment : Fragment(), WorkoutAdapter.OnItemClickListener {
 
         navController?.navigate(R.id.action_workoutFragment_to_workoutSetup, bundle)
 
-//        Toast.makeText(applicationContext, "Item $position clicked", Toast.LENGTH_SHORT).show()
-//        Toast.makeText(applicationContext, "workoutid ${clickedItem.workoutsID} clicked", Toast.LENGTH_SHORT).show()
     }
 
     private fun viewWorkouts(){
@@ -89,14 +87,14 @@ class WorkoutFragment : Fragment(), WorkoutAdapter.OnItemClickListener {
                 MainActivity.databaseHandler.addWorkout(applicationContext, workouts)
             }
 
-            Toast.makeText(applicationContext, name, Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "$name added", Toast.LENGTH_SHORT).show()
             etName?.text?.clear()
 
         } else {
             Toast.makeText(
                 applicationContext,
                 "Name cannot be blank",
-                Toast.LENGTH_LONG
+                Toast.LENGTH_SHORT
             ).show()
         }
         viewWorkouts()

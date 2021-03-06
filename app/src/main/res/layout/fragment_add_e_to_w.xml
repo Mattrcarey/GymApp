@@ -33,45 +33,40 @@
             android:hint="Enter Exercise Name" />
     </LinearLayout>
 
-    <Button
-        android:id="@+id/btnAdd"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Create EXERCISE"
-        android:layout_alignTop="@+id/createExercise"/>
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight = "1.5">
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvItemsList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        android:layout_above="@+id/addSelected"
-        tools:visibility="gone" />
-
-    <TextView
-        android:id="@+id/tvNoRecordsAvailable"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="No records available!!!"
-        android:textSize="18sp"
-        android:visibility="gone"
-        tools:visibility="visible" />
-
+        android:layout_weight="1.5">
 
         <Button
-            android:id="@+id/addSelected"
+            android:id="@+id/btnAdd"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentBottom="true"
-            android:text="Add Selected" />
+            android:text="Create EXERCISE" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvItemsList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/btnAdd"
+            android:layout_marginTop="-1dp"
+            android:orientation="vertical"
+            android:visibility="visible" />
+        <!--        android:layout_above="@+id/addSelected"-->
+
+
     </RelativeLayout>
+
+
+    <Button
+        android:id="@+id/addSelected"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:text="Add Selected" />
+
+
 
 </LinearLayout>

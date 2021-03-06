@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toast
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,7 +45,6 @@ class WorkoutSetup : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         val applicationContext = requireContext().applicationContext
         WID = arguments?.getInt("WID")!!
-        Toast.makeText(applicationContext, "Item $WID clicked", Toast.LENGTH_SHORT).show()
         if (WID != null) {
             viewExercises(WID)
         }

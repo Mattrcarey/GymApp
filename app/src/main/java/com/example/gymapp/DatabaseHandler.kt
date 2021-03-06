@@ -11,7 +11,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
     DATABASE_VERSION) {
 
     companion object {
-        private const val DATABASE_VERSION = 3
+        private const val DATABASE_VERSION = 1
         private const val DATABASE_NAME = "Database"
 
         private const val TABLE_WORKOUTS = "Workouts"
@@ -94,15 +94,13 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         val cursor = db.rawQuery(qry, null)
         val workouts = ArrayList<Workouts>()
 
-        if (cursor.count == 0)
-            Toast.makeText(mCtx, "No Records Found", Toast.LENGTH_SHORT).show() else
-        {while (cursor.moveToNext()){
+        if (cursor.count != 0) {
+            while (cursor.moveToNext()){
             val workout = Workouts()
             workout.workoutsID = cursor.getInt(cursor.getColumnIndex(COLUMN_WORKOUTID))
             workout.workoutsName = cursor.getString(cursor.getColumnIndex(COLUMN_WORKOUTNAME))
             workouts.add(workout)
-        }
-            Toast.makeText(mCtx, "${cursor.count.toString()} Records Found", Toast.LENGTH_SHORT).show()
+            }
         }
         cursor.close()
         db.close()
@@ -115,15 +113,13 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         val cursor = db.rawQuery(qry, null)
         val exercises = ArrayList<Exercises>()
 
-        if (cursor.count == 0)
-            Toast.makeText(mCtx, "No Records Found", Toast.LENGTH_SHORT).show() else
-        {while (cursor.moveToNext()){
+        if (cursor.count != 0) {
+            while (cursor.moveToNext()){
             val exercise = Exercises()
             exercise.exerciseID = cursor.getInt(cursor.getColumnIndex(COLUMN_EXERCISEID))
             exercise.exerciseName = cursor.getString(cursor.getColumnIndex(COLUMN_EXERCISENAME))
             exercises.add(exercise)
-        }
-            Toast.makeText(mCtx, "${cursor.count.toString()} Records Found", Toast.LENGTH_SHORT).show()
+            }
         }
         cursor.close()
         db.close()
@@ -139,15 +135,13 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         val cursor = db.rawQuery(qry, null)
         val exercises = ArrayList<Exercises>()
 
-        if (cursor.count == 0)
-            Toast.makeText(mCtx, "No Records Found", Toast.LENGTH_SHORT).show() else
-        {while (cursor.moveToNext()){
+        if (cursor.count != 0) {
+            while (cursor.moveToNext()){
             val exercise = Exercises()
             exercise.exerciseID = cursor.getInt(cursor.getColumnIndex(COLUMN_EXERCISEID))
             exercise.exerciseName = cursor.getString(cursor.getColumnIndex(COLUMN_EXERCISENAME))
             exercises.add(exercise)
-        }
-            Toast.makeText(mCtx, "${cursor.count.toString()} Records Found", Toast.LENGTH_SHORT).show()
+            }
         }
         cursor.close()
         db.close()
