@@ -54,7 +54,6 @@ class WorkoutFragment : Fragment(), OnItemClickListener {
         val mContext = context
     }
 
-    //Todo: change this function so that it opens a new fragment that displays exercises in the workout and an add exercise button
     override fun onItemClick(position: Int) {
         val applicationContext = requireContext().applicationContext
         val workoutsList : ArrayList<Workouts> =  MainActivity.databaseHandler.getWorkouts(applicationContext)
@@ -80,20 +79,27 @@ class WorkoutFragment : Fragment(), OnItemClickListener {
         val applicationContext = activity?.applicationContext
         val etName = view?.findViewById<EditText>(R.id.etName)
         val name = etName?.text.toString()
+        var error : Long = 0
         if (name.isNotEmpty()) {
             val workouts = Workouts()
             workouts.workoutsName = name
             if (applicationContext != null) {
-                MainActivity.databaseHandler.addWorkout(applicationContext, workouts)
+                error = MainActivity.databaseHandler.addWorkout(applicationContext, workouts)
             }
 
-            Toast.makeText(applicationContext, "$name added", Toast.LENGTH_SHORT).show()
             etName?.text?.clear()
 
         } else {
             Toast.makeText(
                 applicationContext,
                 "Name cannot be blank",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        if(error.toInt() == -1){
+            Toast.makeText(
+                applicationContext,
+                "Name must be unique",
                 Toast.LENGTH_SHORT
             ).show()
         }

@@ -11,21 +11,21 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
     DATABASE_VERSION) {
 
     companion object {
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 8
         private const val DATABASE_NAME = "Database"
 
         private const val TABLE_WORKOUTS = "Workouts"
         private const val COLUMN_WORKOUTID = "workoutid"
         private const val COLUMN_WORKOUTNAME = "workoutname"
         private const val CREATE_WORKOUTTABLE = "CREATE TABLE $TABLE_WORKOUTS ( $COLUMN_WORKOUTID" +
-                " INTEGER PRIMARY KEY AUTOINCREMENT, $COLUMN_WORKOUTNAME TEXT)"
+                " INTEGER PRIMARY KEY AUTOINCREMENT, $COLUMN_WORKOUTNAME TEXT UNIQUE)"
         private const val DELETE_WORKOUTENTRIES = "DROP TABLE IF EXISTS $TABLE_WORKOUTS"
 
         private const val TABLE_EXERCISES = "Exercises"
         private const val COLUMN_EXERCISEID = "exerciseid"
         private const val COLUMN_EXERCISENAME = "exercisename"
         private const val CREATE_EXERCISETABLE = "CREATE TABLE $TABLE_EXERCISES ( $COLUMN_EXERCISEID" +
-                " INTEGER PRIMARY KEY AUTOINCREMENT, $COLUMN_EXERCISENAME TEXT)"
+                " INTEGER PRIMARY KEY AUTOINCREMENT, $COLUMN_EXERCISENAME TEXT UNIQUE)"
         private const val DELETE_EXERCISEENTRIES = "DROP TABLE IF EXISTS $TABLE_EXERCISES"
 
         private const val TABLE_LINKINGTABLE = "Linker"
@@ -54,7 +54,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         onUpgrade(db, oldVersion, newVersion)
     }
 
-    fun addWorkout(mCtx: Context, workouts: Workouts) {
+    fun addWorkout(mCtx: Context, workouts: Workouts) : Long {
         val db = this.writableDatabase
 
         val contentValues = ContentValues()
@@ -63,9 +63,10 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         val success = db.insert(TABLE_WORKOUTS, null, contentValues)
 
         db.close()
+        return success
     }
 
-    fun addExercise(mCtx: Context, exercises: Exercises) {
+    fun addExercise(mCtx: Context, exercises: Exercises) : Long {
         val db = this.writableDatabase
 
         val contentValues = ContentValues()
@@ -74,9 +75,10 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         val success = db.insert(TABLE_EXERCISES, null, contentValues)
 
         db.close()
+        return success
     }
 
-    fun addLink(mCtx: Context, links: Links){
+    fun addLink(mCtx: Context, links: Links) : Long{
         val db = this.writableDatabase
 
         val contentValues = ContentValues()
@@ -86,6 +88,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         val success = db.insert(TABLE_LINKINGTABLE, null, contentValues)
 
         db.close()
+        return success
     }
 
     fun getWorkouts(mCtx : Context) : ArrayList<Workouts>{
@@ -127,7 +130,6 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
     }
 
     fun getExercises(mCtx: Context, WID : Int) : ArrayList<Exercises> {
-        //TODO sql statement to select all from linking table with workoutID = WID then get all exercises
         val qry = "SELECT $TABLE_EXERCISES.$COLUMN_EXERCISEID, $COLUMN_EXERCISENAME FROM $TABLE_EXERCISES, $TABLE_LINKINGTABLE "+
                 "WHERE $TABLE_LINKINGTABLE.$COLUMN_WORKOUTID = $WID " +
                 "AND $TABLE_LINKINGTABLE.$COLUMN_EXERCISEID = $TABLE_EXERCISES.$COLUMN_EXERCISEID"
@@ -141,6 +143,25 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
             exercise.exerciseID = cursor.getInt(cursor.getColumnIndex(COLUMN_EXERCISEID))
             exercise.exerciseName = cursor.getString(cursor.getColumnIndex(COLUMN_EXERCISENAME))
             exercises.add(exercise)
+            }
+        }
+        cursor.close()
+        db.close()
+        return exercises
+    }
+
+    fun getExerciseByName(mCtx: Context, name: String) : ArrayList<Exercises> {
+        val qry = "SELECT * FROM $TABLE_EXERCISES WHERE $COLUMN_EXERCISENAME = '$name'"
+        val db = this.readableDatabase
+        val cursor = db.rawQuery(qry, null)
+        val exercises = ArrayList<Exercises>()
+
+        if (cursor.count != 0) {
+            while (cursor.moveToNext()){
+                val exercise = Exercises()
+                exercise.exerciseID = cursor.getInt(cursor.getColumnIndex(COLUMN_EXERCISEID))
+                exercise.exerciseName = cursor.getString(cursor.getColumnIndex(COLUMN_EXERCISENAME))
+                exercises.add(exercise)
             }
         }
         cursor.close()

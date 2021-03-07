@@ -22,13 +22,12 @@ import androidx.recyclerview.widget.RecyclerView
 class addNewEToW : Fragment(), OnItemClickListener {
 
 
-
-
     companion object{
         var WID: Int = 0
-        var selected : BooleanArray? = null
-        var selectedID : java.util.ArrayList<Exercises>? = null
         private var navController : NavController?= null
+        lateinit var exerciseList : ArrayList<Exercises>
+        lateinit var rv : RecyclerView
+
     }
 
     override fun onCreateView(
@@ -50,7 +49,7 @@ class addNewEToW : Fragment(), OnItemClickListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         val applicationContext = requireContext().applicationContext
         WID = arguments?.getInt("WID")!!
-        viewExercises()
+        getExercises()
         super.onActivityCreated(savedInstanceState)
     }
 
@@ -65,33 +64,48 @@ class addNewEToW : Fragment(), OnItemClickListener {
     }
 
     override fun onItemClick(position: Int) {
-        selected?.set(position, !selected?.get(position)!!)
+        var exercise : Exercises? = exerciseList?.get(position)
+        if (exercise != null) {
+            exercise.isChecked = !exercise.isChecked
+        }
+        if (exercise != null) {
+            exerciseList?.set(position, exercise)
+        }
+
+        rv.adapter?.notifyItemChanged(position)
+    }
+
+
+    private fun getExercises(){
+        val applicationContext = requireContext().applicationContext
+        exerciseList =  MainActivity.databaseHandler.getExercises(applicationContext)
+        var adapter =  AddExerciseAdapter(applicationContext, exerciseList, this)
+        val rv : RecyclerView = requireView().findViewById(R.id.rvItemsList)
+        rv.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false ) as RecyclerView.LayoutManager
+        rv.adapter = adapter
     }
 
 
     private fun viewExercises(){
         val applicationContext = requireContext().applicationContext
-        val exercisesList : ArrayList<Exercises> =  MainActivity.databaseHandler.getExercises(applicationContext)
-        val adapter =  AddExerciseAdapter(applicationContext, exercisesList, this)
-        val rv : RecyclerView = requireView().findViewById(R.id.rvItemsList)
+        val adapter =  AddExerciseAdapter(applicationContext, exerciseList, this)
+        rv = requireView().findViewById(R.id.rvItemsList)
         rv.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false ) as RecyclerView.LayoutManager
         rv.adapter = adapter
-        selected = BooleanArray(adapter.itemCount)
-        selectedID = exercisesList
     }
 
     private fun addRecord() {
         val applicationContext = activity?.applicationContext
         val etName = view?.findViewById<EditText>(R.id.etName)
         val name = etName?.text.toString()
+        var error : Long = -2
         if (name.isNotEmpty()) {
             val exercises = Exercises()
             exercises.exerciseName = name
             if (applicationContext != null) {
-                MainActivity.databaseHandler.addExercise(applicationContext, exercises)
+                error = MainActivity.databaseHandler.addExercise(applicationContext, exercises)
             }
 
-            Toast.makeText(applicationContext, "$name added", Toast.LENGTH_SHORT).show()
             etName?.text?.clear()
 
         } else {
@@ -100,16 +114,35 @@ class addNewEToW : Fragment(), OnItemClickListener {
                 "Name cannot be blank",
                 Toast.LENGTH_SHORT
             ).show()
+
         }
-        viewExercises()
+        if(error.toInt() == -1){
+            Toast.makeText(
+                applicationContext,
+                "Name must be unique",
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+        if ((error.toInt()) >= 0 ) {
+            getNewExercise(name)
+        }
+    }
+
+    private fun getNewExercise(name: String){
+        val applicationContext = activity?.applicationContext
+        if (applicationContext != null) {
+            exerciseList.add(MainActivity.databaseHandler.getExerciseByName(applicationContext, name)[0])
+            rv.adapter?.notifyItemInserted(exerciseList.size)
+        }
+
     }
 
     private fun addToWorkout() {
         val applicationContext = activity?.applicationContext
-        for ((counter, i) in selected!!.withIndex()){
-            if (i){
+        for (i in exerciseList){
+            if (i.isChecked){
                 val link = Links()
-                link.eid = selectedID?.get(counter)!!.exerciseID
+                link.eid = i.exerciseID
                 link.wid = WID
                 if (applicationContext != null) {
                     MainActivity.databaseHandler.addLink(applicationContext, link)

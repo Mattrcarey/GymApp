@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
@@ -87,7 +88,6 @@ class AddExerciseAdapter(mCtx : Context, val exercises : ArrayList<Exercises>,
                          private val listener: OnItemClickListener) : RecyclerView.Adapter<AddExerciseAdapter.ViewHolder>() {
 
 
-    var ischecked : BooleanArray? = null
     val mCtx = mCtx
     var parent : ViewGroup? = null
 
@@ -97,15 +97,14 @@ class AddExerciseAdapter(mCtx : Context, val exercises : ArrayList<Exercises>,
 
         init {
             itemView.setOnClickListener(this)
-            ischecked = BooleanArray(itemCount)
         }
 
         override fun onClick(v: View?) {
             val position = adapterPosition
             if (position != RecyclerView.NO_POSITION) {
-                ischecked?.set(position, !ischecked!![position])
                 listener.onItemClick(adapterPosition)
-                checkbox(this,position)
+//                exercises[adapterPosition].isChecked = !exercises[adapterPosition].isChecked
+//                onBindViewHolder(this, position)
             }
         }
     }
@@ -116,26 +115,18 @@ class AddExerciseAdapter(mCtx : Context, val exercises : ArrayList<Exercises>,
         return ViewHolder(v)
     }
 
-    fun checkbox (holder: ViewHolder, position: Int) {
-        (parent as RecyclerView).layoutManager
-        if (ischecked?.get(position) == true) {
-            holder.checked.visibility = View.VISIBLE
-        }
-        else {
-            holder.checked.visibility = View.GONE
-        }
-    }
-
     override fun onBindViewHolder(holder: AddExerciseAdapter.ViewHolder, position: Int) {
         val exercise : Exercises = exercises[position]
         holder.txtExerciseName.text = exercise.exerciseName
+        if(exercise.isChecked == true){
+            holder.checked.visibility = View.VISIBLE
+        }
+        else{
+            holder.checked.visibility = View.GONE
+        }
     }
 
     override fun getItemCount(): Int {
         return exercises.size
     }
-
-
 }
-
-

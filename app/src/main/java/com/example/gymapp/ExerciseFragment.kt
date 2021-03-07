@@ -57,14 +57,14 @@ class ExerciseFragment : Fragment() {
         val applicationContext = activity?.applicationContext
         val etName = view?.findViewById<EditText>(R.id.etName)
         val name = etName?.text.toString()
+        var error : Long = 0
         if (name.isNotEmpty()) {
             val exercises = Exercises()
             exercises.exerciseName = name
             if (applicationContext != null) {
-                MainActivity.databaseHandler.addExercise(applicationContext, exercises)
+                error = MainActivity.databaseHandler.addExercise(applicationContext, exercises)
             }
 
-            Toast.makeText(applicationContext, "$name added", Toast.LENGTH_LONG).show()
             etName?.text?.clear()
 
         } else {
@@ -72,6 +72,13 @@ class ExerciseFragment : Fragment() {
                     applicationContext,
                     "Name cannot be blank",
                     Toast.LENGTH_SHORT
+            ).show()
+        }
+        if(error.toInt() == -1){
+            Toast.makeText(
+                applicationContext,
+                "Name must be unique",
+                Toast.LENGTH_SHORT
             ).show()
         }
         viewExercises()
