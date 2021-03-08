@@ -6,6 +6,12 @@
     android:orientation="vertical"
     tools:context=".WorkoutSetup">
 
+    <Button
+        android:id="@+id/btnAddE"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="add exercises to workout" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvItemsList"
         android:layout_width="match_parent"
@@ -22,11 +28,5 @@
         android:textSize="18sp"
         android:visibility="gone"
         tools:visibility="visible" />
-
-    <Button
-        android:id="@+id/btnAddE"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="add exercises to workout"/>
 
 </LinearLayout>

@@ -45,9 +45,7 @@ class WorkoutSetup : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         val applicationContext = requireContext().applicationContext
         WID = arguments?.getInt("WID")!!
-        if (WID != null) {
-            viewExercises(WID)
-        }
+        viewExercises(WID)
         super.onActivityCreated(savedInstanceState)
     }
 
