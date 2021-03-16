@@ -50,7 +50,13 @@ class WorkoutSetup : Fragment(), OnItemClickListener {
     }
 
     override fun onItemClick(position: Int) {
-        TODO("Not yet implemented")
+        val applicationContext = requireContext().applicationContext
+        val exerciseList : ArrayList<Exercises> =  MainActivity.databaseHandler.getExercises(applicationContext)
+        val adapter =  ExerciseAdapter(applicationContext, exerciseList, this)
+        val clickedItem : Exercises = exerciseList[position]
+        val bundle = Bundle()
+        bundle.putInt("EID", clickedItem.exerciseID)
+        navController?.navigate(R.id.action_workoutSetup_to_ExerciseEntry, bundle)
     }
 
     override fun onAttach(context: Context) {
