@@ -41,7 +41,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
 //        private const val COLUMN_SETNUMBER = "Setnumber"
         private const val COLUMN_WEIGHT = "Weight"
         private const val COLUMN_REPS = "Reps"
-        private const val CREATE_RECORDSTABLE = "CREATE TABLE $TABLE_RECORD ( $COLUMN_DATE DATETIME, " +
+        private const val CREATE_RECORDSTABLE = "CREATE TABLE $TABLE_RECORD ( $COLUMN_DATE TEXT, " +
                 "$COLUMN_WEIGHT FLOAT, $COLUMN_REPS INTEGER, $COLUMN_EXERCISEID INTEGER, " +
                 "FOREIGN KEY ($COLUMN_EXERCISEID) REFERENCES $TABLE_EXERCISES ON UPDATE CASCADE ON DELETE CASCADE," +
                 "PRIMARY KEY ($COLUMN_DATE, $COLUMN_EXERCISEID))"

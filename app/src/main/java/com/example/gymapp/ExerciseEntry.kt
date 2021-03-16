@@ -9,6 +9,8 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.navigation.NavController
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 class ExerciseEntry : Fragment() {
@@ -59,7 +61,10 @@ class ExerciseEntry : Fragment() {
             val records = Records()
             records.weight = weight.toFloat()
             records.reps = reps.toInt()
-            //TODO: get the current time
+            val current = LocalDateTime.now()
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+            val formatted = current.format(formatter)
+            records.EntryDate = formatted
             if (applicationContext != null) {
                 error = MainActivity.databaseHandler.addRecord(applicationContext, records)
             }
