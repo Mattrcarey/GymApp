@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import android.widget.CursorAdapter
 import android.widget.Toast
 
 //creating the database logic, extending the SQLiteOpenHelper base class
@@ -38,7 +39,6 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
 
         private const val TABLE_RECORD = "Records"
         private const val COLUMN_DATE = "EntryDate"
-//        private const val COLUMN_SETNUMBER = "Setnumber"
         private const val COLUMN_WEIGHT = "Weight"
         private const val COLUMN_REPS = "Reps"
         private const val CREATE_RECORDSTABLE = "CREATE TABLE $TABLE_RECORD ( $COLUMN_DATE TEXT, " +
@@ -118,6 +118,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         contentValues.put(COLUMN_DATE, records.EntryDate)
         contentValues.put(COLUMN_WEIGHT, records.weight)
         contentValues.put(COLUMN_REPS, records.reps)
+        contentValues.put(COLUMN_EXERCISEID, records.eid)
 
         val success = db.insert(TABLE_RECORD, null, contentValues)
 
@@ -205,6 +206,28 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         cursor.close()
         db.close()
         return exercises
+    }
+
+
+    fun getRecords(mCtx: Context, EID : Int) : ArrayList<Records> {
+        val qry = "SELECT * FROM $TABLE_RECORD WHERE $TABLE_RECORD.$COLUMN_EXERCISEID = $EID"
+        val db = this.readableDatabase
+        val cursor = db.rawQuery(qry, null)
+        val records = ArrayList<Records>()
+
+        if (cursor.count != 0) {
+            while (cursor.moveToNext()){
+                val record = Records()
+                record.eid = cursor.getInt(cursor.getColumnIndex(COLUMN_EXERCISEID))
+                record.EntryDate = cursor.getString(cursor.getColumnIndex(COLUMN_DATE))
+                record.weight = cursor.getFloat(cursor.getColumnIndex(COLUMN_WEIGHT))
+                record.reps = cursor.getInt(cursor.getColumnIndex(COLUMN_REPS))
+                records.add(record)
+            }
+        }
+        cursor.close()
+        db.close()
+        return records
     }
 
 }

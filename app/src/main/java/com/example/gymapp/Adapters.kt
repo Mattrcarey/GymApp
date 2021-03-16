@@ -141,3 +141,33 @@ class AddExerciseAdapter(mCtx : Context, val exercises : ArrayList<Exercises>,
         return exercises.size
     }
 }
+
+
+class RecordAdapter(mCtx : Context, val records : ArrayList<Records>) : RecyclerView.Adapter<RecordAdapter.ViewHolder>() {
+
+    val mCtx = mCtx
+
+    inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
+        val txtDate = itemView.findViewById<TextView>(R.id.date)
+        val txtWeight = itemView.findViewById<TextView>(R.id.weight)
+        val txtReps = itemView.findViewById<TextView>(R.id.reps)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecordAdapter.ViewHolder {
+        val v : View = LayoutInflater.from(parent.context).inflate(R.layout.lo_records,parent, false)
+        return ViewHolder(v)
+    }
+
+    override fun onBindViewHolder(holder: RecordAdapter.ViewHolder, position: Int) {
+        val record : Records = records[position]
+        holder.txtDate.text = record.EntryDate.substring(0,10)
+        holder.txtWeight.text = record.weight.toString()
+        holder.txtReps.text = record.reps.toString()
+
+    }
+
+    override fun getItemCount(): Int {
+        return records.size
+    }
+
+}

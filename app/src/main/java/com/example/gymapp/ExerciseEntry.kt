@@ -9,13 +9,19 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.navigation.NavController
+import androidx.navigation.Navigation
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 
 class ExerciseEntry : Fragment() {
 
-    private var navController : NavController?= null
+    companion object{
+        var EID: Int = 0
+        private var navController : NavController?= null
+    }
 
 
     override fun onCreateView(
@@ -30,8 +36,25 @@ class ExerciseEntry : Fragment() {
         return view
     }
 
-    private fun viewRecords(){
-        //TODO: implement this method
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        navController = Navigation.findNavController(view)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        val applicationContext = requireContext().applicationContext
+        EID = arguments?.getInt("EID")!!
+        viewRecords(EID)
+        super.onActivityCreated(savedInstanceState)
+    }
+
+    private fun viewRecords(EID : Int){
+        val applicationContext = requireContext().applicationContext
+        val recordList : ArrayList<Records> =  MainActivity.databaseHandler.getRecords(applicationContext,EID)
+        val adapter =  RecordAdapter(applicationContext, recordList)
+        val rv : RecyclerView = requireView().findViewById(R.id.rvRecordsList)
+        rv.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, true ) as RecyclerView.LayoutManager
+        rv.adapter = adapter
     }
 
     private fun addRecord() {
@@ -65,6 +88,7 @@ class ExerciseEntry : Fragment() {
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
             val formatted = current.format(formatter)
             records.EntryDate = formatted
+            records.eid = EID
             if (applicationContext != null) {
                 error = MainActivity.databaseHandler.addRecord(applicationContext, records)
             }
@@ -86,6 +110,6 @@ class ExerciseEntry : Fragment() {
                     Toast.LENGTH_SHORT
             ).show()
         }
-        viewRecords()
+        viewRecords(EID)
     }
 }
