@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
  * Use the [WorkoutSetup.newInstance] factory method to
  * create an instance of this fragment.
  */
-class WorkoutSetup : Fragment() {
+class WorkoutSetup : Fragment(), OnItemClickListener {
 
     companion object{
         var WID: Int = 0
@@ -49,6 +49,10 @@ class WorkoutSetup : Fragment() {
         super.onActivityCreated(savedInstanceState)
     }
 
+    override fun onItemClick(position: Int) {
+        TODO("Not yet implemented")
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val mContext = context
@@ -66,7 +70,7 @@ class WorkoutSetup : Fragment() {
     private fun viewExercises(WID : Int){
         val applicationContext = requireContext().applicationContext
         val exercisesList : ArrayList<Exercises> =  MainActivity.databaseHandler.getExercises(applicationContext, WID)
-        val adapter =  ExerciseAdapter(applicationContext, exercisesList)
+        val adapter =  ExerciseAdapter(applicationContext, exercisesList, this)
         val rv : RecyclerView = requireView().findViewById(R.id.rvItemsList)
         rv.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false ) as RecyclerView.LayoutManager
         rv.adapter = adapter

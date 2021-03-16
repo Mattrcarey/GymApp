@@ -21,8 +21,7 @@ class WorkoutAdapter(mCtx : Context, val workouts : ArrayList<Workouts>,
 
     val mCtx = mCtx
 
-    inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView),
-    View.OnClickListener {
+    inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         val txtWorkoutName = itemView.findViewById<TextView>(R.id.workoutName)
         val btnUpdate = itemView.findViewById<ImageView>(R.id.btnUpdate)
         val btnDelete = itemView.findViewById<ImageView>(R.id.btnDelete)
@@ -57,14 +56,26 @@ class WorkoutAdapter(mCtx : Context, val workouts : ArrayList<Workouts>,
 }
 
 
-class ExerciseAdapter(mCtx : Context, val exercises : ArrayList<Exercises>) : RecyclerView.Adapter<ExerciseAdapter.ViewHolder>() {
+class ExerciseAdapter(mCtx : Context, val exercises : ArrayList<Exercises>,
+                      private val listener: OnItemClickListener) : RecyclerView.Adapter<ExerciseAdapter.ViewHolder>() {
 
     val mCtx = mCtx
 
-    class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) {
+    inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         val txtExerciseName = itemView.findViewById<TextView>(R.id.exerciseName)
         val btnUpdate = itemView.findViewById<ImageView>(R.id.btnUpdate)
         val btnDelete = itemView.findViewById<ImageView>(R.id.btnDelete)
+
+        init {
+            itemView.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            val position = adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                listener.onItemClick(adapterPosition)
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ExerciseAdapter.ViewHolder {
@@ -118,7 +129,7 @@ class AddExerciseAdapter(mCtx : Context, val exercises : ArrayList<Exercises>,
     override fun onBindViewHolder(holder: AddExerciseAdapter.ViewHolder, position: Int) {
         val exercise : Exercises = exercises[position]
         holder.txtExerciseName.text = exercise.exerciseName
-        if(exercise.isChecked == true){
+        if(exercise.isChecked){
             holder.checked.visibility = View.VISIBLE
         }
         else{

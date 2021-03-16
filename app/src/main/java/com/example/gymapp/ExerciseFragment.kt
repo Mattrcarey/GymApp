@@ -9,17 +9,16 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 
-/**
- * A simple [Fragment] subclass.
- * Use the [ExerciseFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
-class ExerciseFragment : Fragment() {
+class ExerciseFragment : Fragment(), OnItemClickListener {
 
+
+    private var navController : NavController?= null
 
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
@@ -39,15 +38,32 @@ class ExerciseFragment : Fragment() {
         super.onActivityCreated(savedInstanceState)
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        navController = Navigation.findNavController(view)
+    }
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         val mContext = context
     }
 
+
+    override fun onItemClick(position: Int) {
+        val applicationContext = requireContext().applicationContext
+        val exerciseList : ArrayList<Exercises> =  MainActivity.databaseHandler.getExercises(applicationContext)
+        val adapter =  ExerciseAdapter(applicationContext, exerciseList, this)
+        val clickedItem : Exercises = exerciseList[position]
+        val bundle = Bundle()
+        bundle.putInt("EID", clickedItem.exerciseID)
+        navController?.navigate(R.id.action_exerciseFragment_to_exerciseEntry, bundle)
+    }
+
     private fun viewExercises(){
         val applicationContext = requireContext().applicationContext
         val exercisesList : ArrayList<Exercises> =  MainActivity.databaseHandler.getExercises(applicationContext)
-        val adapter =  ExerciseAdapter(applicationContext, exercisesList)
+        val adapter =  ExerciseAdapter(applicationContext, exercisesList, this)
         val rv : RecyclerView = requireView().findViewById(R.id.rvItemsList)
         rv.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false ) as RecyclerView.LayoutManager
         rv.adapter = adapter

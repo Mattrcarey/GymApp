@@ -61,7 +61,6 @@ class WorkoutFragment : Fragment(), OnItemClickListener {
         val clickedItem : Workouts = workoutsList[position]
         val bundle = Bundle()
         bundle.putInt("WID", clickedItem.workoutsID)
-
         navController?.navigate(R.id.action_workoutFragment_to_workoutSetup, bundle)
 
     }

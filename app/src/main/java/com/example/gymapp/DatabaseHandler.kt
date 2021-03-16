@@ -10,8 +10,9 @@ import android.widget.Toast
 class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME, null,
     DATABASE_VERSION) {
 
+
     companion object {
-        private const val DATABASE_VERSION = 8
+        private const val DATABASE_VERSION = 1
         private const val DATABASE_NAME = "Database"
 
         private const val TABLE_WORKOUTS = "Workouts"
@@ -35,24 +36,40 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
                 ", FOREIGN KEY ($COLUMN_EXERCISEID) REFERENCES $TABLE_EXERCISES ON UPDATE CASCADE ON DELETE CASCADE)"
         private const val DELETE_LINKINGENTRIES = "DROP TABLE IF EXISTS $TABLE_LINKINGTABLE"
 
+        private const val TABLE_RECORD = "Records"
+        private const val COLUMN_DATE = "EntryDate"
+//        private const val COLUMN_SETNUMBER = "Setnumber"
+        private const val COLUMN_WEIGHT = "Weight"
+        private const val COLUMN_REPS = "Reps"
+        private const val CREATE_RECORDSTABLE = "CREATE TABLE $TABLE_RECORD ( $COLUMN_DATE DATETIME, " +
+                "$COLUMN_WEIGHT FLOAT, $COLUMN_REPS INTEGER, $COLUMN_EXERCISEID INTEGER, " +
+                "FOREIGN KEY ($COLUMN_EXERCISEID) REFERENCES $TABLE_EXERCISES ON UPDATE CASCADE ON DELETE CASCADE," +
+                "PRIMARY KEY ($COLUMN_DATE, $COLUMN_EXERCISEID))"
+        private const val DELETE_RECORDSTABLE = "DROP TABLE IF EXISTS $TABLE_RECORD"
     }
+
 
     override fun onCreate(db: SQLiteDatabase?) {
         db!!.execSQL(CREATE_WORKOUTTABLE)
-        db!!.execSQL(CREATE_EXERCISETABLE)
-        db!!.execSQL(CREATE_LINKINGTABLE)
+        db.execSQL(CREATE_EXERCISETABLE)
+        db.execSQL(CREATE_LINKINGTABLE)
+        db.execSQL(CREATE_RECORDSTABLE)
     }
+
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
         db!!.execSQL(DELETE_WORKOUTENTRIES)
-        db!!.execSQL(DELETE_EXERCISEENTRIES)
-        db!!.execSQL(DELETE_LINKINGENTRIES)
+        db.execSQL(DELETE_EXERCISEENTRIES)
+        db.execSQL(DELETE_LINKINGENTRIES)
+        db.execSQL(DELETE_RECORDSTABLE)
         onCreate(db)
     }
+
 
     override fun onDowngrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
         onUpgrade(db, oldVersion, newVersion)
     }
+
 
     fun addWorkout(mCtx: Context, workouts: Workouts) : Long {
         val db = this.writableDatabase
@@ -66,6 +83,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         return success
     }
 
+
     fun addExercise(mCtx: Context, exercises: Exercises) : Long {
         val db = this.writableDatabase
 
@@ -77,6 +95,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         db.close()
         return success
     }
+
 
     fun addLink(mCtx: Context, links: Links) : Long{
         val db = this.writableDatabase
@@ -90,6 +109,22 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         db.close()
         return success
     }
+
+
+    fun addRecord(mCtx: Context, records: Records) : Long {
+        val db = this.writableDatabase
+
+        val contentValues = ContentValues()
+        contentValues.put(COLUMN_DATE, records.EntryDate)
+        contentValues.put(COLUMN_WEIGHT, records.weight)
+        contentValues.put(COLUMN_REPS, records.reps)
+
+        val success = db.insert(TABLE_RECORD, null, contentValues)
+
+        db.close()
+        return success
+    }
+
 
     fun getWorkouts(mCtx : Context) : ArrayList<Workouts>{
         val qry = "SELECT * FROM $TABLE_WORKOUTS"
@@ -110,6 +145,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         return workouts
     }
 
+
     fun getExercises(mCtx : Context) : ArrayList<Exercises> {
         val qry = "SELECT * FROM $TABLE_EXERCISES"
         val db = this.readableDatabase
@@ -128,6 +164,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         db.close()
         return exercises
     }
+
 
     fun getExercises(mCtx: Context, WID : Int) : ArrayList<Exercises> {
         val qry = "SELECT $TABLE_EXERCISES.$COLUMN_EXERCISEID, $COLUMN_EXERCISENAME FROM $TABLE_EXERCISES, $TABLE_LINKINGTABLE "+
@@ -149,6 +186,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         db.close()
         return exercises
     }
+
 
     fun getExerciseByName(mCtx: Context, name: String) : ArrayList<Exercises> {
         val qry = "SELECT * FROM $TABLE_EXERCISES WHERE $COLUMN_EXERCISENAME = '$name'"

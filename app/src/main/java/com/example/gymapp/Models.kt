@@ -16,3 +16,10 @@ class Links{
     var eid : Int = 0
 }
 
+
+class Records{
+    var EntryDate : String = ""
+    var weight : Float = 0f
+    var reps : Int = 0
+}
+
