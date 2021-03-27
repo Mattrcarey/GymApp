@@ -39,14 +39,10 @@ class ExerciseEntry : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        val applicationContext = requireContext().applicationContext
         EID = arguments?.getInt("EID")!!
         viewRecords(EID)
-        super.onActivityCreated(savedInstanceState)
     }
+
 
     private fun viewRecords(EID : Int){
         val applicationContext = requireContext().applicationContext

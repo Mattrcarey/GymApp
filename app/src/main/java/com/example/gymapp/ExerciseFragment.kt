@@ -32,11 +32,11 @@ class ExerciseFragment : Fragment(), OnItemClickListener {
         return view
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        val applicationContext = requireContext().applicationContext
-        viewExercises()
-        super.onActivityCreated(savedInstanceState)
-    }
+//    override fun onActivityCreated(savedInstanceState: Bundle?) {
+//        val applicationContext = requireContext().applicationContext
+//        viewExercises()
+//        super.onActivityCreated(savedInstanceState)
+//    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)

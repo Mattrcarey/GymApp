@@ -40,18 +40,19 @@ class WorkoutSetup : Fragment(), OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        val applicationContext = requireContext().applicationContext
         WID = arguments?.getInt("WID")!!
         viewExercises(WID)
-        super.onActivityCreated(savedInstanceState)
     }
+
+//    override fun onActivityCreated(savedInstanceState: Bundle?) {
+//        val applicationContext = requireContext().applicationContext
+//
+//        super.onActivityCreated(savedInstanceState)
+//    }
 
     override fun onItemClick(position: Int) {
         val applicationContext = requireContext().applicationContext
-        val exerciseList : ArrayList<Exercises> =  MainActivity.databaseHandler.getExercises(applicationContext)
+        val exerciseList : ArrayList<Exercises> =  MainActivity.databaseHandler.getExercises(applicationContext, WID)
         val adapter =  ExerciseAdapter(applicationContext, exerciseList, this)
         val clickedItem : Exercises = exerciseList[position]
         val bundle = Bundle()

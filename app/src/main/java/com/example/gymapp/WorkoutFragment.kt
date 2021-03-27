@@ -37,12 +37,6 @@ class WorkoutFragment : Fragment(), OnItemClickListener {
         return view
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        val applicationContext = requireContext().applicationContext
-        viewWorkouts()
-        super.onActivityCreated(savedInstanceState)
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -62,7 +56,6 @@ class WorkoutFragment : Fragment(), OnItemClickListener {
         val bundle = Bundle()
         bundle.putInt("WID", clickedItem.workoutsID)
         navController?.navigate(R.id.action_workoutFragment_to_workoutSetup, bundle)
-
     }
 
     private fun viewWorkouts(){

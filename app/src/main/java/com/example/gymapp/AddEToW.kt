@@ -46,16 +46,17 @@ class addNewEToW : Fragment(), OnItemClickListener {
         return view
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        val applicationContext = requireContext().applicationContext
-        WID = arguments?.getInt("WID")!!
-        getExercises()
-        super.onActivityCreated(savedInstanceState)
-    }
+//    override fun onActivityCreated(savedInstanceState: Bundle?) {
+//        val applicationContext = requireContext().applicationContext
+//
+//        super.onActivityCreated(savedInstanceState)
+//    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
+        WID = arguments?.getInt("WID")!!
+        getExercises()
     }
 
     override fun onAttach(context: Context) {
