@@ -11,11 +11,16 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-
+/**
+ * OnItemClickListener : Simple interface used for recyclerView clicks
+ */
 interface OnItemClickListener {
     fun onItemClick(position: Int)
 }
 
+/**
+ * WorkoutAdapter :
+ */
 class WorkoutAdapter(mCtx : Context, val workouts : ArrayList<Workouts>,
                      private val listener: OnItemClickListener) : RecyclerView.Adapter<WorkoutAdapter.ViewHolder>() {
 
@@ -114,8 +119,6 @@ class AddExerciseAdapter(mCtx : Context, val exercises : ArrayList<Exercises>,
             val position = adapterPosition
             if (position != RecyclerView.NO_POSITION) {
                 listener.onItemClick(adapterPosition)
-//                exercises[adapterPosition].isChecked = !exercises[adapterPosition].isChecked
-//                onBindViewHolder(this, position)
             }
         }
     }
