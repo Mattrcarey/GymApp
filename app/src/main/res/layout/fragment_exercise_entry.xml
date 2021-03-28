@@ -23,7 +23,7 @@
             android:layout_marginBottom="4dp"
             android:hint="Enter weight"
             app:layout_constraintBottom_toTopOf="@+id/etReps"
-            app:layout_constraintStart_toEndOf="@+id/textView"></EditText>
+            app:layout_constraintStart_toEndOf="@+id/textView" />
 
         <TextView
             android:id="@+id/textView2"
@@ -37,7 +37,7 @@
             app:layout_constraintEnd_toStartOf="@+id/etReps"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.496"></TextView>
+            app:layout_constraintVertical_bias="0.496"/>
 
         <TextView
             android:id="@+id/textView"
@@ -49,7 +49,7 @@
             android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@+id/textView2"
             app:layout_constraintEnd_toStartOf="@+id/etReps"
-            app:layout_constraintStart_toStartOf="parent"></TextView>
+            app:layout_constraintStart_toStartOf="parent"/>
 
         <EditText
             android:id="@+id/etReps"
@@ -59,7 +59,7 @@
             android:hint="Enter reps"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/textView2"
-            app:layout_constraintTop_toTopOf="parent"></EditText>
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <Button
             android:id="@+id/btnAdd"
@@ -70,7 +70,7 @@
             android:text="Add Set"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/etReps"></Button>
+            app:layout_constraintTop_toBottomOf="@+id/etReps"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -78,12 +78,12 @@
         android:id="@+id/rvRecordsList"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintHeight_percent="0.3"
+        app:layout_constraintHeight_percent="0.4"
         android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent">
 
     </androidx.recyclerview.widget.RecyclerView>
-    <!--        tools:visibility="gone" />-->
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

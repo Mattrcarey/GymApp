@@ -36,7 +36,11 @@
         android:id="@+id/runFragment"
         android:name="com.example.gymapp.RunFragment"
         android:label="Run"
-        tools:layout="@layout/fragment_run" />
+        tools:layout="@layout/fragment_run" >
+        <action
+            android:id="@+id/action_runFragment_to_startedRunFragment"
+            app:destination="@id/startedRunFragment" />
+    </fragment>
 
     <fragment
         android:id="@+id/workoutSetup"
@@ -67,4 +71,10 @@
         android:name="com.example.gymapp.ExerciseEntry"
         android:label="fragment_exercise_entry"
         tools:layout="@layout/fragment_exercise_entry" />
+
+    <fragment
+        android:id="@+id/startedRunFragment"
+        android:name="com.example.gymapp.StartedRunFragment"
+        android:label="fragment_started_run"
+        tools:layout="@layout/fragment_started_run" />
 </navigation>

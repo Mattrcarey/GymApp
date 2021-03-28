@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
@@ -43,10 +44,7 @@ class RunFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        //TODO make this a button
-        requestMyPermissions()
-
+        val applicationContext = requireContext().applicationContext
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_run, container, false)
     }
@@ -56,6 +54,16 @@ class RunFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         runDao = MainActivity.runDao
         navController = Navigation.findNavController(view)
+        val applicationContext = requireContext().applicationContext
+        val newRun : Button = requireView().findViewById<Button>(R.id.startRunningfrag)
+        newRun.setOnClickListener { view ->
+            if (!hasLocationPermission(applicationContext)) {
+                requestMyPermissions()
+            }
+            else {
+                navController!!.navigate(R.id.action_runFragment_to_startedRunFragment)
+            }
+        }
     }
 
     fun hasFineLocationPermission(context: Context) : Boolean {
@@ -75,13 +83,14 @@ class RunFragment : Fragment() {
     }
 
     fun hasLocationPermission(context: Context) : Boolean {
-        return if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            (hasFineLocationPermission(context) && hasCoarseLocationPermission(context))
-        } else {
-            (hasFineLocationPermission(context) &&
-                    hasCoarseLocationPermission(context) &&
-                    hasBackgroundLocationPermission(context))
-        }
+//        return if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+//            (hasFineLocationPermission(context) && hasCoarseLocationPermission(context))
+//        } else {
+//            (hasFineLocationPermission(context) &&
+//                    hasCoarseLocationPermission(context) &&
+//                    hasBackgroundLocationPermission(context))
+//        }
+        return hasFineLocationPermission(context)
     }
 
     fun requestMyPermissions() {
@@ -93,13 +102,13 @@ class RunFragment : Fragment() {
                 permissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
             }
             if (!hasCoarseLocationPermission(applicationContext)) {
-                permissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+                //permissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-                if (!hasBackgroundLocationPermission(applicationContext)) {
-                    permissionsNeeded.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                }
-            }
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+//                if (!hasBackgroundLocationPermission(applicationContext)) {
+//                    permissionsNeeded.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+//                }
+//            }
         }
 
         if (permissionsNeeded.isNotEmpty()) {
