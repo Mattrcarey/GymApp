@@ -13,7 +13,4 @@ data class Run (
     var distance: Int = 0,
     var run_time: Int = 0,
     var calories: Int = 0,
-){
-
-
-}
+)

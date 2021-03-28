@@ -1,13 +1,14 @@
 package com.example.gymapp
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,9 +25,14 @@ class ExerciseEntry : Fragment() {
     }
 
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreateView(
-            inflater: LayoutInflater, container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         val view: View = inflater.inflate(R.layout.fragment_exercise_entry, container, false)
         val btnAdd : Button = view.findViewById<Button>(R.id.btnAdd)
@@ -43,13 +49,24 @@ class ExerciseEntry : Fragment() {
         viewRecords(EID)
     }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        navController?.popBackStack()
+        return true
+    }
 
-    private fun viewRecords(EID : Int){
+    private fun viewRecords(EID: Int){
         val applicationContext = requireContext().applicationContext
-        val recordList : ArrayList<Records> =  MainActivity.databaseHandler.getRecords(applicationContext,EID)
+        val recordList : ArrayList<Records> =  MainActivity.databaseHandler.getRecords(
+            applicationContext,
+            EID
+        )
         val adapter =  RecordAdapter(applicationContext, recordList)
         val rv : RecyclerView = requireView().findViewById(R.id.rvRecordsList)
-        rv.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, true ) as RecyclerView.LayoutManager
+        rv.layoutManager = LinearLayoutManager(
+            applicationContext,
+            LinearLayoutManager.VERTICAL,
+            true
+        )
         rv.adapter = adapter
     }
 
@@ -62,17 +79,17 @@ class ExerciseEntry : Fragment() {
         var error : Long = 0
         if(weight.toFloatOrNull() == null){
             Toast.makeText(
-                    applicationContext,
-                    "weight must be a number",
-                    Toast.LENGTH_SHORT
+                applicationContext,
+                "weight must be a number",
+                Toast.LENGTH_SHORT
             ).show()
             return
         }
         if(reps.toIntOrNull() == null) {
             Toast.makeText(
-                    applicationContext,
-                    "reps must be a number",
-                    Toast.LENGTH_SHORT
+                applicationContext,
+                "reps must be a number",
+                Toast.LENGTH_SHORT
             ).show()
             return
         }
@@ -83,7 +100,7 @@ class ExerciseEntry : Fragment() {
             val current = LocalDateTime.now()
             val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
             val formatted = current.format(formatter)
-            records.EntryDate = formatted
+            records.entryDate = formatted
             records.eid = EID
             if (applicationContext != null) {
                 error = MainActivity.databaseHandler.addRecord(applicationContext, records)
@@ -94,16 +111,16 @@ class ExerciseEntry : Fragment() {
 
         } else {
             Toast.makeText(
-                    applicationContext,
-                    "Name cannot be blank",
-                    Toast.LENGTH_SHORT
+                applicationContext,
+                "Name cannot be blank",
+                Toast.LENGTH_SHORT
             ).show()
         }
         if(error.toInt() == -1){
             Toast.makeText(
-                    applicationContext,
-                    "Something went wrong",
-                    Toast.LENGTH_SHORT
+                applicationContext,
+                "Something went wrong",
+                Toast.LENGTH_SHORT
             ).show()
         }
         viewRecords(EID)

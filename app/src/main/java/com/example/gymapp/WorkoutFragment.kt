@@ -43,11 +43,6 @@ class WorkoutFragment : Fragment(), OnItemClickListener {
         navController = Navigation.findNavController(view)
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        val mContext = context
-    }
-
     override fun onItemClick(position: Int) {
         val applicationContext = requireContext().applicationContext
         val workoutsList : ArrayList<Workouts> =  MainActivity.databaseHandler.getWorkouts(applicationContext)

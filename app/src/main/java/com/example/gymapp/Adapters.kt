@@ -7,8 +7,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 /**
@@ -163,7 +161,7 @@ class RecordAdapter(mCtx : Context, val records : ArrayList<Records>) : Recycler
 
     override fun onBindViewHolder(holder: RecordAdapter.ViewHolder, position: Int) {
         val record : Records = records[position]
-        holder.txtDate.text = record.EntryDate.substring(0,10)
+        holder.txtDate.text = record.entryDate.substring(0,10)
         holder.txtWeight.text = record.weight.toString()
         holder.txtReps.text = record.reps.toString()
 

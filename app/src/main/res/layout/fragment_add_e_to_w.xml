@@ -4,11 +4,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".addNewEToW"
+    tools:context=".AddNewEToW"
     android:orientation="vertical"
     android:padding="10dp"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
 
     <LinearLayout
         android:id="@+id/createExercise"
@@ -52,9 +51,6 @@
             android:layout_marginTop="-1dp"
             android:orientation="vertical"
             android:visibility="visible" />
-        <!--        android:layout_above="@+id/addSelected"-->
-
-
     </RelativeLayout>
 
 

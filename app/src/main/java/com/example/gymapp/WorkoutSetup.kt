@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -25,6 +26,11 @@ class WorkoutSetup : Fragment(), OnItemClickListener {
         private var navController : NavController?= null
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -44,11 +50,10 @@ class WorkoutSetup : Fragment(), OnItemClickListener {
         viewExercises(WID)
     }
 
-//    override fun onActivityCreated(savedInstanceState: Bundle?) {
-//        val applicationContext = requireContext().applicationContext
-//
-//        super.onActivityCreated(savedInstanceState)
-//    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        navController?.popBackStack()
+        return true
+    }
 
     override fun onItemClick(position: Int) {
         val applicationContext = requireContext().applicationContext

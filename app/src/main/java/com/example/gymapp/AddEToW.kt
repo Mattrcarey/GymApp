@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -14,13 +15,8 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
-/**
- * A simple [Fragment] subclass.
- * Use the [addNewEToW.newInstance] factory method to
- * create an instance of this fragment.
- */
-class addNewEToW : Fragment(), OnItemClickListener {
 
+class AddNewEToW : Fragment(), OnItemClickListener {
 
     companion object{
         var WID: Int = 0
@@ -28,6 +24,11 @@ class addNewEToW : Fragment(), OnItemClickListener {
         lateinit var exerciseList : ArrayList<Exercises>
         lateinit var rv : RecyclerView
 
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -46,17 +47,17 @@ class addNewEToW : Fragment(), OnItemClickListener {
         return view
     }
 
-//    override fun onActivityCreated(savedInstanceState: Bundle?) {
-//        val applicationContext = requireContext().applicationContext
-//
-//        super.onActivityCreated(savedInstanceState)
-//    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
         WID = arguments?.getInt("WID")!!
         getExercises()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        navController?.popBackStack()
+        return true
     }
 
     override fun onAttach(context: Context) {

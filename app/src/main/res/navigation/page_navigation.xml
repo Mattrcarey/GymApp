@@ -11,6 +11,7 @@
         android:name="com.example.gymapp.homeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home" />
+
     <fragment
         android:id="@+id/workoutFragment"
         android:name="com.example.gymapp.WorkoutFragment"
@@ -30,11 +31,13 @@
             android:id="@+id/action_exerciseFragment_to_exerciseEntry"
             app:destination="@id/ExerciseEntry" />
     </fragment>
+
     <fragment
         android:id="@+id/runFragment"
-        android:name="com.example.gymapp.runFragment"
+        android:name="com.example.gymapp.RunFragment"
         android:label="Run"
         tools:layout="@layout/fragment_run" />
+
     <fragment
         android:id="@+id/workoutSetup"
         android:name="com.example.gymapp.WorkoutSetup"
@@ -47,15 +50,18 @@
             android:id="@+id/action_workoutSetup_to_ExerciseEntry"
             app:destination="@id/ExerciseEntry" />
     </fragment>
+
+
     <fragment
         android:id="@+id/addEToW"
-        android:name="com.example.gymapp.addNewEToW"
+        android:name="com.example.gymapp.AddNewEToW"
         android:label="fragment_add_new_e_to_w"
         tools:layout="@layout/fragment_add_e_to_w" >
         <action
             android:id="@+id/action_addEToW_to_workoutSetup"
             app:destination="@id/workoutSetup" />
     </fragment>
+
     <fragment
         android:id="@+id/ExerciseEntry"
         android:name="com.example.gymapp.ExerciseEntry"

@@ -10,7 +10,7 @@ class Converter {
 
     //converts a bitmap to a byteArray
     @TypeConverter
-    fun bit_to_byte(bitmap: Bitmap): ByteArray {
+    fun bitToByte(bitmap: Bitmap): ByteArray {
         val outputStream = ByteArrayOutputStream()
         bitmap.compress(Bitmap.CompressFormat.PNG, 90, outputStream)
         return outputStream.toByteArray()
@@ -18,7 +18,7 @@ class Converter {
 
     //converts a byteArray to a bitmap
     @TypeConverter
-    fun byte_to_bit(byteArray: ByteArray): Bitmap {
+    fun byteToBit(byteArray: ByteArray): Bitmap {
         return BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
     }
 }
