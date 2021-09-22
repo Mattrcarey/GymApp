@@ -21,7 +21,7 @@
             android:layout_width="19dp"
             android:layout_height="wrap_content"
             android:layout_weight="0.25"
-            android:text="Create New"
+            android:text="@string/create_new"
             android:textSize="18sp" />
 
         <EditText
