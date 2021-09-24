@@ -10,9 +10,9 @@
         android:id="@+id/clInnerLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.30"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/map">
 
@@ -20,13 +20,56 @@
             android:id="@+id/tvTimer"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="00:00:00:00"
-            android:textSize="50sp"
-            app:layout_constraintBottom_toTopOf="@+id/btnStartRun"
+            android:text="00:00"
+            android:textSize="45sp"
+            app:layout_constraintBottom_toTopOf="@+id/currentSpeed"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/mph"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MPH: "
+            android:textSize="25sp"
+            app:layout_constraintBottom_toTopOf="@+id/btnStartRun"
+            app:layout_constraintEnd_toStartOf="@id/currentSpeed"
+            app:layout_constraintTop_toBottomOf="@id/tvTimer" />
+
+        <TextView
+            android:id="@+id/currentSpeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:text="00.00"
+            android:textSize="45sp"
+            app:layout_constraintBottom_toTopOf="@+id/btnStartRun"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTimer" />
+
+        <TextView
+            android:id="@+id/miles"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:text="Miles: "
+            android:textSize="25sp"
+            app:layout_constraintBottom_toTopOf="@+id/btnStartRun"
+            app:layout_constraintEnd_toStartOf="@id/tv_miles"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTimer" />
+
+        <TextView
+            android:id="@+id/tv_miles"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.00"
+            android:textSize="45sp"
+            app:layout_constraintBottom_toTopOf="@+id/btnStartRun"
+            app:layout_constraintStart_toEndOf="@id/miles"
+            app:layout_constraintTop_toBottomOf="@id/tvTimer" />
+
 
         <Button
             android:id="@+id/btnStartRun"
@@ -35,9 +78,8 @@
             android:text="Start"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/btnEndRun"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvTimer" />
+            app:layout_constraintTop_toBottomOf="@+id/currentSpeed" />
 
         <Button
             android:id="@+id/btnEndRun"
@@ -47,34 +89,21 @@
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toEndOf="@+id/btnStartRun"
-            app:layout_constraintTop_toBottomOf="@+id/tvTimer" />
+            app:layout_constraintTop_toBottomOf="@+id/currentSpeed" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <fragment
-        tools:context=".MapsActivity"
         android:id="@+id/map"
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/clInnerLayout"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <!--    <com.google.android.gms.maps.MapView-->
-<!--        android:id="@+id/mapView"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="0dp"-->
-<!--        app:layout_constraintBottom_toTopOf="@+id/clInnerLayout"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="0.5"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
+        app:layout_constraintTop_toTopOf="parent"
+        tools:context=".MapsActivity"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

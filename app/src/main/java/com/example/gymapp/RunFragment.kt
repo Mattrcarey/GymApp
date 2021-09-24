@@ -66,12 +66,12 @@ class RunFragment : Fragment() {
         }
     }
 
-    fun hasFineLocationPermission(context: Context) : Boolean {
+    private fun hasFineLocationPermission(context: Context) : Boolean {
         return (ActivityCompat.checkSelfPermission(context,
             Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
     }
 
-    fun hasCoarseLocationPermission(context: Context) : Boolean {
+    private fun hasCoarseLocationPermission(context: Context) : Boolean {
         return (ActivityCompat.checkSelfPermission(context,
             Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
     }
@@ -83,13 +83,13 @@ class RunFragment : Fragment() {
     }
 
     fun hasLocationPermission(context: Context) : Boolean {
-//        return if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-//            (hasFineLocationPermission(context) && hasCoarseLocationPermission(context))
-//        } else {
-//            (hasFineLocationPermission(context) &&
-//                    hasCoarseLocationPermission(context) &&
-//                    hasBackgroundLocationPermission(context))
-//        }
+        return if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            (hasFineLocationPermission(context) && hasCoarseLocationPermission(context))
+        } else {
+            (hasFineLocationPermission(context) &&
+                    hasCoarseLocationPermission(context) &&
+                    hasBackgroundLocationPermission(context))
+        }
         return hasFineLocationPermission(context)
     }
 
@@ -102,13 +102,13 @@ class RunFragment : Fragment() {
                 permissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
             }
             if (!hasCoarseLocationPermission(applicationContext)) {
-                //permissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+                permissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
             }
-//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-//                if (!hasBackgroundLocationPermission(applicationContext)) {
-//                    permissionsNeeded.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-//                }
-//            }
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                if (!hasBackgroundLocationPermission(applicationContext)) {
+                    permissionsNeeded.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+                }
+            }
         }
 
         if (permissionsNeeded.isNotEmpty()) {
