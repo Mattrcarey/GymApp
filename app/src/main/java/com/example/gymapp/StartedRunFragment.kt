@@ -11,9 +11,11 @@ import android.widget.Button
 import android.widget.Chronometer
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.example.gymapp.runDB.Run
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
 import java.lang.Double.max
 import java.lang.Double.min
@@ -23,8 +25,6 @@ import kotlin.math.sqrt
 
 
 class StartedRunFragment : Fragment(), OnMapReadyCallback {
-
-
     private lateinit var mMap: GoogleMap
     private lateinit var lastLocation: Location
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -33,9 +33,11 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
     private lateinit var timer: Chronometer
     private lateinit var startRun: Button
     private lateinit var pauseRun: Button
+    private lateinit var resumeRun: Button
     private lateinit var endRun: Button
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallBack: LocationCallback
+    private var coords: MutableList<Double> = mutableListOf(91.0,-91.0,181.0,-181.0)
     private var time: Long = 0
     private var latitude: Double = 0.0
     private var longitude : Double = 0.0
@@ -83,6 +85,7 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
         timer = requireView().findViewById<Chronometer>(R.id.tvTimer)
         startRun = requireView().findViewById<Button>(R.id.btnStartRun)
         pauseRun = requireView().findViewById<Button>(R.id.btnPauseRun)
+        resumeRun = requireView().findViewById<Button>(R.id.btnResumeRun)
         endRun = requireView().findViewById<Button>(R.id.btnEndRun)
 
         startRun.setOnClickListener { view ->
@@ -98,18 +101,22 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
             timer.stop()
             time = SystemClock.elapsedRealtime() - timer.base
             stopTracking()
-            startRun.visibility = View.VISIBLE
-            pauseRun.visibility = View.GONE
-            endRun.visibility = View.GONE
+            resumeRun.visibility = View.VISIBLE
+            pauseRun.visibility = View.INVISIBLE
+        }
+
+        resumeRun.setOnClickListener { view ->
+            timer.start()
+            startTracking()
+            pauseRun.visibility = View.VISIBLE
+            resumeRun.visibility = View.GONE
+
         }
 
         endRun.setOnClickListener { view ->
             timer.stop()
             time = SystemClock.elapsedRealtime() - timer.base
             stopTracking()
-            startRun.visibility = View.VISIBLE
-            pauseRun.visibility = View.GONE
-            endRun.visibility = View.GONE
             saveData()
         }
 
@@ -117,7 +124,13 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
     }
 
     private fun saveData() {
-        TODO("Not yet implemented")
+        val bounds = LatLngBounds(
+            LatLng(coords[0],coords[2]),
+            LatLng(coords[1],coords[3])
+        )
+        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 25))
+
+        //val run: Run = Run() //TODO
     }
 
     private fun stopTracking() {
@@ -160,6 +173,18 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
         }
         else {
             currentSpeed.setText("00.00")
+        }
+        if (location.latitude < coords[0]){
+            coords[0] = location.latitude
+        }
+        if (location.latitude > coords[1]){
+            coords[1] = location.latitude
+        }
+        if (location.longitude < coords[2]){
+            coords[2] = location.longitude
+        }
+        if (location.longitude > coords[3]){
+            coords[3] = location.longitude
         }
         updateDistance(location.latitude, location.longitude)
     }
