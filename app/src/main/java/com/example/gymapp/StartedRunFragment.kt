@@ -3,10 +3,12 @@ package com.example.gymapp
 import android.annotation.SuppressLint
 import android.location.Location
 import android.os.Bundle
+import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.Chronometer
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.google.android.gms.location.*
@@ -28,12 +30,13 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var currentSpeed: TextView
     private lateinit var miles: TextView
-    private lateinit var timer: TextView
+    private lateinit var timer: Chronometer
     private lateinit var startRun: Button
     private lateinit var pauseRun: Button
     private lateinit var endRun: Button
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallBack: LocationCallback
+    private var time: Long = 0
     private var latitude: Double = 0.0
     private var longitude : Double = 0.0
     private var distance: Double = 0.0
@@ -77,12 +80,14 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         currentSpeed = requireView().findViewById<TextView>(R.id.currentSpeed)
         miles = requireView().findViewById<TextView>(R.id.tv_miles)
-        timer = requireView().findViewById<TextView>(R.id.tvTimer)
+        timer = requireView().findViewById<Chronometer>(R.id.tvTimer)
         startRun = requireView().findViewById<Button>(R.id.btnStartRun)
         pauseRun = requireView().findViewById<Button>(R.id.btnPauseRun)
         endRun = requireView().findViewById<Button>(R.id.btnEndRun)
 
         startRun.setOnClickListener { view ->
+            timer.base = SystemClock.elapsedRealtime() - time
+            timer.start()
             startTracking()
             startRun.visibility = View.INVISIBLE
             pauseRun.visibility = View.VISIBLE
@@ -90,6 +95,8 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
         }
 
         pauseRun.setOnClickListener { view ->
+            timer.stop()
+            time = SystemClock.elapsedRealtime() - timer.base
             stopTracking()
             startRun.visibility = View.VISIBLE
             pauseRun.visibility = View.GONE
@@ -97,6 +104,8 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
         }
 
         endRun.setOnClickListener { view ->
+            timer.stop()
+            time = SystemClock.elapsedRealtime() - timer.base
             stopTracking()
             startRun.visibility = View.VISIBLE
             pauseRun.visibility = View.GONE
