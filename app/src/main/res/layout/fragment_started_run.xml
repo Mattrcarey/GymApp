@@ -77,7 +77,18 @@
             android:layout_height="wrap_content"
             android:text="Start"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/btnEndRun"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/currentSpeed" />
+
+        <Button
+            android:id="@+id/btnPauseRun"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Pause"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/btnEndRun"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/currentSpeed" />
 
@@ -85,11 +96,11 @@
             android:id="@+id/btnEndRun"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="End Run"
+            android:text="Finish"
             android:visibility="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/btnStartRun"
+            app:layout_constraintStart_toEndOf="@+id/btnPauseRun"
             app:layout_constraintTop_toBottomOf="@+id/currentSpeed" />
 
 

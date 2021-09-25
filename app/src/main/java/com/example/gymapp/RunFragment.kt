@@ -83,13 +83,13 @@ class RunFragment : Fragment() {
     }
 
     fun hasLocationPermission(context: Context) : Boolean {
-        return if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            (hasFineLocationPermission(context) && hasCoarseLocationPermission(context))
-        } else {
-            (hasFineLocationPermission(context) &&
-                    hasCoarseLocationPermission(context) &&
-                    hasBackgroundLocationPermission(context))
-        }
+//        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+//            return (hasFineLocationPermission(context) && hasCoarseLocationPermission(context))
+//        } else {
+//            return (hasFineLocationPermission(context) &&
+//                    hasCoarseLocationPermission(context) &&
+//                    hasBackgroundLocationPermission(context))
+//        }
         return hasFineLocationPermission(context)
     }
 
@@ -101,19 +101,20 @@ class RunFragment : Fragment() {
             if (!hasFineLocationPermission(applicationContext)) {
                 permissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
             }
-            if (!hasCoarseLocationPermission(applicationContext)) {
-                permissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
-            }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
-                if (!hasBackgroundLocationPermission(applicationContext)) {
-                    permissionsNeeded.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                }
-            }
+//            if (!hasCoarseLocationPermission(applicationContext)) {
+//                permissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
+//            }
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+//                if (!hasBackgroundLocationPermission(applicationContext)) {
+//                    permissionsNeeded.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
+//                }
+//            }
         }
 
         if (permissionsNeeded.isNotEmpty()) {
-            for(x in permissionsNeeded)
-            requestPermissionsLauncher.launch(permissionsNeeded.toTypedArray())
+            for(x in permissionsNeeded) {
+                requestPermissionsLauncher.launch(permissionsNeeded.toTypedArray())
+            }
         }
     }
 

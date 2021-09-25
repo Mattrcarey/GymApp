@@ -29,6 +29,8 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
     private lateinit var miles: TextView
     private lateinit var timer: TextView
     private lateinit var startRun: Button
+    private lateinit var pauseRun: Button
+    private lateinit var endRun: Button
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallBack: LocationCallback
     private var latitude: Double = 0.0
@@ -76,11 +78,42 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
         miles = requireView().findViewById<TextView>(R.id.tv_miles)
         timer = requireView().findViewById<TextView>(R.id.tvTimer)
         startRun = requireView().findViewById<Button>(R.id.btnStartRun)
+        pauseRun = requireView().findViewById<Button>(R.id.btnPauseRun)
+        endRun = requireView().findViewById<Button>(R.id.btnEndRun)
+
         startRun.setOnClickListener { view ->
             startTracking()
+            startRun.visibility = View.INVISIBLE
+            pauseRun.visibility = View.VISIBLE
+            endRun.visibility = View.VISIBLE
+        }
+
+        pauseRun.setOnClickListener { view ->
+            stopTracking()
+            startRun.visibility = View.VISIBLE
+            pauseRun.visibility = View.GONE
+            endRun.visibility = View.GONE
+        }
+
+        endRun.setOnClickListener { view ->
+            stopTracking()
+            startRun.visibility = View.VISIBLE
+            pauseRun.visibility = View.GONE
+            endRun.visibility = View.GONE
+            saveData()
         }
 
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    private fun saveData() {
+        TODO("Not yet implemented")
+    }
+
+    private fun stopTracking() {
+        latitude = 0.0
+        longitude = 0.0
+        fusedLocationProviderClient.removeLocationUpdates(locationCallBack)
     }
 
     @SuppressLint("MissingPermission")
@@ -133,5 +166,4 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
             miles.setText(String.format("%.2f",distance))
         }
     }
-
 }
