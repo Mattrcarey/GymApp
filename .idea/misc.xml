@@ -3,7 +3,10 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/layout/activity_main.xml" value="0.33177083333333335" />
+        <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/layout/fragment_add_e_to_w.xml" value="0.33177083333333335" />
         <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/layout/fragment_started_run.xml" value="0.32864583333333336" />
+        <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/menu/nav_menu.xml" value="0.33177083333333335" />
       </map>
     </option>
   </component>

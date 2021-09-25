@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.PolylineOptions
 import java.lang.Double.max
 import java.lang.Double.min
 import kotlin.math.abs
@@ -163,7 +164,16 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
             val latdif = abs(max(lat,latitude) - min(lat,latitude))
             val longdif = abs(max(long,longitude) - min(long,longitude))
             distance += sqrt(latdif.pow(2) + longdif.pow(2))
+            mMap.addPolyline(PolylineOptions()
+                .color(-0x7e387c)
+                .clickable(false)
+                .add(
+                    LatLng(latitude, longitude),
+                    LatLng(lat,long)
+                ))
             miles.setText(String.format("%.2f",distance))
+            latitude = lat
+            longitude = long
         }
     }
 }

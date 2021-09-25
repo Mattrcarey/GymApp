@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.gymapp">
+    package="com.example.gymapp"
+    xmlns:tools="http://schemas.android.com/tools">
 
 
 
@@ -15,8 +16,14 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.GymApp">
-        <activity android:name=".MainActivity" android:launchMode="singleTask">
+        android:theme="@style/Theme.GymApp"
+        android:screenOrientation="sensorPortrait"
+        tools:ignore="LockedOrientationActivity">
+        <activity
+            android:name=".MainActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
