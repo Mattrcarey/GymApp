@@ -14,7 +14,7 @@ interface RunDAO {
     fun deleteRun(run: Run)
 
     @Query("SELECT * FROM runs ORDER BY id DESC")
-    fun getRuns(): LiveData<List<Run>>
+    fun getRuns(): List<Run> //ArrayList<Run>//
 
     @Query("SELECT SUM(distance) FROM runs")
     fun getTotalDistance(): LiveData<Int>

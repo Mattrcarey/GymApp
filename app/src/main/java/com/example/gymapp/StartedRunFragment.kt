@@ -1,6 +1,7 @@
 package com.example.gymapp
 
 import android.annotation.SuppressLint
+import android.app.Service
 import android.location.Location
 import android.os.Bundle
 import android.os.SystemClock
@@ -11,6 +12,8 @@ import android.widget.Button
 import android.widget.Chronometer
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.example.gymapp.runDB.Run
@@ -47,6 +50,11 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
     private var latitude: Double = 0.0
     private var longitude : Double = 0.0
     private var distance: Double = 0.0
+
+    companion object{
+        val isTracking = MutableLiveData<Boolean>()
+
+    }
 
 
     override fun onCreateView(
@@ -154,6 +162,7 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
     @SuppressLint("MissingPermission")
     private fun startTracking() {
         fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null)
+        //isTracking = true
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {

@@ -7,6 +7,18 @@
     android:layout_height="wrap_content"
     android:clickable="true">
 
+
+    <TextView
+        android:id="@+id/m"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Miles: "
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <TextView
         android:id="@+id/milesRan"
         android:layout_width="wrap_content"
@@ -15,8 +27,20 @@
         android:layout_marginTop="8dp"
         android:text="Miles"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/m"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/am"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="MPH: "
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/milesRan" />
+
 
     <TextView
         android:id="@+id/avgMiles"
@@ -26,8 +50,19 @@
         android:layout_marginTop="8dp"
         android:text="avgMiles"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/am"
         app:layout_constraintTop_toBottomOf="@id/milesRan" />
+
+    <TextView
+        android:id="@+id/tr"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Time: "
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/avgMiles" />
 
     <TextView
         android:id="@+id/timeRan"
@@ -37,7 +72,7 @@
         android:layout_marginTop="8dp"
         android:text="Time"
         android:textSize="18sp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tr"
         app:layout_constraintTop_toBottomOf="@id/avgMiles" />
 
     <ImageView
@@ -52,15 +87,13 @@
 
     <ImageView
         android:id="@+id/runImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="92dp"
+        android:layout_height="92dp"
         app:layout_constraintEnd_toStartOf="@id/btnUpdate"
-        app:layout_constraintStart_toEndOf="@id/avgMiles"
+        app:layout_constraintStart_toEndOf="@id/timeRan"
         app:layout_constraintBottom_toBottomOf="@id/line"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_baseline_delete_24"/>
-
-<!--    TODO switch ^ image to an image of the run    -->
 
     <ImageView
         android:id="@+id/btnUpdate"

@@ -2,12 +2,16 @@ package com.example.gymapp
 
 
 import android.content.Context
+import android.media.Image
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.gymapp.runDB.Run
+import org.w3c.dom.Text
+import java.lang.Math.floor
 
 /**
  * OnItemClickListener : Simple interface used for recyclerView clicks
@@ -162,7 +166,6 @@ class RecordAdapter(mCtx : Context, val records : ArrayList<Records>) : Recycler
         holder.txtDate.text = record.entryDate.substring(0,10)
         holder.txtWeight.text = record.weight.toString()
         holder.txtReps.text = record.reps.toString()
-
     }
 
     override fun getItemCount(): Int {
@@ -170,20 +173,47 @@ class RecordAdapter(mCtx : Context, val records : ArrayList<Records>) : Recycler
     }
 }
 
-class RunAdapter : RecyclerView.Adapter<RunAdapter.ViewHolder>() {
+class RunAdapter(val runs : ArrayList<Run>, private val listener: OnItemClickListener) : RecyclerView.Adapter<RunAdapter.ViewHolder>() {
 
-    inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) 
+    inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
+        val milesRan = itemView.findViewById<TextView>(R.id.milesRan)
+        val avgMiles = itemView.findViewById<TextView>(R.id.avgMiles)
+        val timeRan = itemView.findViewById<TextView>(R.id.timeRan)
+        val runImage = itemView.findViewById<ImageView>(R.id.runImage)
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        TODO("Not yet implemented")
+        init {
+            itemView.setOnClickListener(this)
+        }
+
+        override fun onClick(v: View?) {
+            val position = adapterPosition
+            if (position != RecyclerView.NO_POSITION) {
+                listener.onItemClick(adapterPosition)
+            }
+        }
+
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        TODO("Not yet implemented")
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        val v : View = LayoutInflater.from(parent.context).inflate(R.layout.lo_runs,parent, false)
+        return ViewHolder(v)
+    }
+
+    override fun onBindViewHolder(holder: RunAdapter.ViewHolder, position: Int) {
+        val run : Run = runs[position]
+        holder.milesRan.text = String.format("%.2f",run.distance)
+        holder.avgMiles.text = String.format("%.2f",run.avg_speed)
+        val millisecs : Long = run.run_time
+        val hours : Int = floor((millisecs / 3600000).toDouble()).toInt()
+        val minutes : Int = floor(((millisecs % 3600000) / 60000).toDouble()).toInt()
+        val seconds : Int = floor((((millisecs % 3600000) % 60000) / 1000).toDouble()).toInt()
+        val runTime : String = "$hours:$minutes:$seconds"
+        holder.timeRan.text = runTime
+        holder.runImage.setImageBitmap(run.image)
     }
 
     override fun getItemCount(): Int {
-        TODO("Not yet implemented")
+        return runs.size
     }
 
 }

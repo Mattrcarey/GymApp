@@ -106,8 +106,6 @@ class ExerciseEntry : Fragment() {
                 error = MainActivity.databaseHandler.addRecord(applicationContext, records)
             }
 
-            etWeight?.text?.clear()
-            etReps?.text?.clear()
 
         } else {
             Toast.makeText(
