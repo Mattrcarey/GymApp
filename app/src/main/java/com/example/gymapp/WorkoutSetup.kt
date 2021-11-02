@@ -14,11 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
 
-/**
- * A simple [Fragment] subclass.
- * Use the [WorkoutSetup.newInstance] factory method to
- * create an instance of this fragment.
- */
+
 class WorkoutSetup : Fragment(), OnItemClickListener {
 
     companion object{

@@ -62,8 +62,6 @@ class WorkoutAdapter(mCtx : Context, val workouts : ArrayList<Workouts>,
 class ExerciseAdapter(mCtx : Context, val exercises : ArrayList<Exercises>,
                       private val listener: OnItemClickListener) : RecyclerView.Adapter<ExerciseAdapter.ViewHolder>() {
 
-    val mCtx = mCtx
-
     inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
         val txtExerciseName = itemView.findViewById<TextView>(R.id.exerciseName)
         val btnUpdate = itemView.findViewById<ImageView>(R.id.btnUpdate)
@@ -169,6 +167,23 @@ class RecordAdapter(mCtx : Context, val records : ArrayList<Records>) : Recycler
 
     override fun getItemCount(): Int {
         return records.size
+    }
+}
+
+class RunAdapter : RecyclerView.Adapter<RunAdapter.ViewHolder>() {
+
+    inner class ViewHolder(itemView : View) : RecyclerView.ViewHolder(itemView) 
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+        TODO("Not yet implemented")
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        TODO("Not yet implemented")
+    }
+
+    override fun getItemCount(): Int {
+        TODO("Not yet implemented")
     }
 
 }

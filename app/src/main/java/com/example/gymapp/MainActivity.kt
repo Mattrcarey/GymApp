@@ -10,6 +10,7 @@ import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.room.Room
+import com.example.gymapp.runDB.Run
 import com.example.gymapp.runDB.RunDAO
 import com.example.gymapp.runDB.RunDatabase
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -28,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
         databaseHandler = DatabaseHandler(this)
 
-        runningDB = Room.databaseBuilder(applicationContext, RunDatabase::class.java, "runs").build()
+        runningDB = Room.databaseBuilder(applicationContext, RunDatabase::class.java, "runs").allowMainThreadQueries().build()
         runDao = runningDB.getRunDao()
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)

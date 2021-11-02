@@ -18,7 +18,6 @@ import androidx.recyclerview.widget.RecyclerView
 
 class ExerciseFragment : Fragment(), OnItemClickListener {
 
-
     private var navController : NavController?= null
 
     override fun onCreateView(
@@ -39,17 +38,10 @@ class ExerciseFragment : Fragment(), OnItemClickListener {
         navController = Navigation.findNavController(view)
     }
 
-    override fun onAttach(context: Context) {
-        super.onAttach(context)
-        val mContext = context
-    }
-
-
 
     override fun onItemClick(position: Int) {
         val applicationContext = requireContext().applicationContext
         val exerciseList : ArrayList<Exercises> =  MainActivity.databaseHandler.getExercises(applicationContext)
-        val adapter =  ExerciseAdapter(applicationContext, exerciseList, this)
         val clickedItem : Exercises = exerciseList[position]
         val bundle = Bundle()
         bundle.putInt("EID", clickedItem.exerciseID)

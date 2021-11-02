@@ -55,5 +55,4 @@
         android:textSize="18sp"
         android:visibility="gone"
         tools:visibility="visible" />
-
 </LinearLayout>

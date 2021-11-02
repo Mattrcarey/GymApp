@@ -5,8 +5,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
 @Database(
-    entities = [Run::class],
-    version = 1
+    version = 1,
+    entities = [Run::class] ,
 )
 
 @TypeConverters(Converter::class)

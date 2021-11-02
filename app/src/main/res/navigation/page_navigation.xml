@@ -76,5 +76,9 @@
         android:id="@+id/startedRunFragment"
         android:name="com.example.gymapp.StartedRunFragment"
         android:label="fragment_started_run"
-        tools:layout="@layout/fragment_started_run" />
+        tools:layout="@layout/fragment_started_run" >
+        <action
+            android:id="@+id/action_startedRunFragment_to_runFragment"
+            app:destination="@id/runFragment" />
+    </fragment>
 </navigation>

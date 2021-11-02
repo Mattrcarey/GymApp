@@ -8,10 +8,10 @@ import androidx.room.*
 interface RunDAO {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertRun(run: Run)
+    fun insertRun(run: Run)
 
     @Delete
-    suspend fun deleteRun(run: Run)
+    fun deleteRun(run: Run)
 
     @Query("SELECT * FROM runs ORDER BY id DESC")
     fun getRuns(): LiveData<List<Run>>
@@ -22,7 +22,5 @@ interface RunDAO {
     @Query("SELECT SUM(run_time) FROM runs")
     fun getTotalRunTime(): LiveData<Int>
 
-    @Query("SELECT SUM(calories) FROM runs")
-    fun getTotalCalories(): LiveData<Int>
 
 }

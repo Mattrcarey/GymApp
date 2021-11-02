@@ -8,25 +8,59 @@
     android:clickable="true">
 
     <TextView
-        android:id="@+id/exerciseName"
+        android:id="@+id/milesRan"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Exercise"
-        android:textSize="20sp"
+        android:text="Miles"
+        android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/avgMiles"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="avgMiles"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/milesRan" />
+
+    <TextView
+        android:id="@+id/timeRan"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Time"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/avgMiles" />
+
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/line"
         android:layout_width="match_parent"
         android:layout_height="4dp"
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/exerciseName"
+        app:layout_constraintTop_toBottomOf="@+id/timeRan"
         app:srcCompat="@drawable/dotted_line" />
+
+    <ImageView
+        android:id="@+id/runImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@id/btnUpdate"
+        app:layout_constraintStart_toEndOf="@id/avgMiles"
+        app:layout_constraintBottom_toBottomOf="@id/line"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_baseline_delete_24"/>
+
+<!--    TODO switch ^ image to an image of the run    -->
 
     <ImageView
         android:id="@+id/btnUpdate"

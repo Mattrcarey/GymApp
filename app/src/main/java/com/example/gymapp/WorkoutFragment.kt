@@ -97,5 +97,4 @@ class WorkoutFragment : Fragment(), OnItemClickListener {
         viewWorkouts()
         super.onResume()
     }
-
 }

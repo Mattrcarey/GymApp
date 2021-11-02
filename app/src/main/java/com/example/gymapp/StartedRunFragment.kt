@@ -11,6 +11,8 @@ import android.widget.Button
 import android.widget.Chronometer
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.example.gymapp.runDB.Run
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
@@ -19,8 +21,10 @@ import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
 import java.lang.Double.max
 import java.lang.Double.min
+import java.util.*
 import kotlin.math.abs
 import kotlin.math.pow
+import kotlin.math.round
 import kotlin.math.sqrt
 
 
@@ -37,6 +41,7 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
     private lateinit var endRun: Button
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallBack: LocationCallback
+    private var navController : NavController?= null
     private var coords: MutableList<Double> = mutableListOf(91.0,-91.0,181.0,-181.0)
     private var time: Long = 0
     private var latitude: Double = 0.0
@@ -80,6 +85,8 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
 
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        navController = Navigation.findNavController(view)
+
         currentSpeed = requireView().findViewById<TextView>(R.id.currentSpeed)
         miles = requireView().findViewById<TextView>(R.id.tv_miles)
         timer = requireView().findViewById<Chronometer>(R.id.tvTimer)
@@ -129,8 +136,13 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
             LatLng(coords[1],coords[3])
         )
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 25))
-
-        //val run: Run = Run() //TODO
+        mMap.snapshot { bmp ->
+            val avgSpeed = round((distance/time)*10) / 10f
+            val dateTimeStamp = Calendar.getInstance().timeInMillis
+            val run = Run(bmp, dateTimeStamp, avgSpeed.toFloat(), distance.toFloat(), time)
+            MainActivity.runDao.insertRun(run)
+            navController!!.navigate(R.id.action_startedRunFragment_to_runFragment)
+        }
     }
 
     private fun stopTracking() {
