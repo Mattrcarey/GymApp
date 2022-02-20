@@ -3,9 +3,23 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/drawable/dotted_line.xml" value="0.5703125" />
+        <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/drawable/ic_baseline_check_box_24.xml" value="0.5703125" />
+        <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/drawable/ic_baseline_edit_24.xml" value="0.5703125" />
         <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/layout/activity_main.xml" value="0.33177083333333335" />
         <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/layout/fragment_add_e_to_w.xml" value="0.33177083333333335" />
+        <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/layout/fragment_exercise.xml" value="0.3729166666666667" />
+        <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/layout/fragment_exercise_entry.xml" value="0.3729166666666667" />
+        <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/layout/fragment_home.xml" value="0.3729166666666667" />
+        <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/layout/fragment_run.xml" value="0.3729166666666667" />
         <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/layout/fragment_started_run.xml" value="0.32864583333333336" />
+        <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/layout/fragment_workout.xml" value="0.3729166666666667" />
+        <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/layout/fragment_workout_setup.xml" value="0.3729166666666667" />
+        <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/layout/lo_add_exercises.xml" value="0.3729166666666667" />
+        <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/layout/lo_exercises.xml" value="0.3729166666666667" />
+        <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/layout/lo_records.xml" value="0.3729166666666667" />
+        <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/layout/lo_runs.xml" value="0.5541666666666667" />
+        <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/layout/lo_workouts.xml" value="0.3729166666666667" />
         <entry key="..\:/Users/Matth/StudioProjects/GymApp/app/src/main/res/menu/nav_menu.xml" value="0.33177083333333335" />
       </map>
     </option>

@@ -2,6 +2,7 @@ package com.example.gymapp
 
 import android.annotation.SuppressLint
 import android.app.Service
+import android.content.Intent
 import android.location.Location
 import android.os.Bundle
 import android.os.SystemClock
@@ -34,7 +35,7 @@ import kotlin.math.sqrt
 class StartedRunFragment : Fragment(), OnMapReadyCallback {
     private lateinit var mMap: GoogleMap
     private lateinit var lastLocation: Location
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+//    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var currentSpeed: TextView
     private lateinit var miles: TextView
     private lateinit var timer: Chronometer
@@ -50,11 +51,6 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
     private var latitude: Double = 0.0
     private var longitude : Double = 0.0
     private var distance: Double = 0.0
-
-    companion object{
-        val isTracking = MutableLiveData<Boolean>()
-
-    }
 
 
     override fun onCreateView(
@@ -73,20 +69,20 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync (this)
 
-        locationRequest = LocationRequest.create().apply {
-            interval = 5000
-            fastestInterval = 2000
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-            maxWaitTime = 5000
-        }
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(applicationContext)
+//        locationRequest = LocationRequest.create().apply {
+//            interval = 5000
+//            fastestInterval = 2000
+//            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+//            maxWaitTime = 5000
+//        }
+//        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(applicationContext)
 
-        locationCallBack = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult?) {
-                locationResult ?: return
-                updateUI(locationResult.lastLocation)
-            }
-        }
+//        locationCallBack = object : LocationCallback() {
+//            override fun onLocationResult(locationResult: LocationResult?) {
+//                locationResult ?: return
+//                updateUI(locationResult.lastLocation)
+//            }
+//        }
 
         return view
     }
@@ -132,37 +128,39 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
             timer.stop()
             time = SystemClock.elapsedRealtime() - timer.base
             stopTracking()
-            saveData()
+//            saveData()
         }
 
         super.onViewCreated(view, savedInstanceState)
     }
 
-    private fun saveData() {
-        val bounds = LatLngBounds(
-            LatLng(coords[0],coords[2]),
-            LatLng(coords[1],coords[3])
-        )
-        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 25))
-        mMap.snapshot { bmp ->
-            val avgSpeed = round((distance/time)*10) / 10f
-            val dateTimeStamp = Calendar.getInstance().timeInMillis
-            val run = Run(bmp, dateTimeStamp, avgSpeed.toFloat(), distance.toFloat(), time)
-            MainActivity.runDao.insertRun(run)
-            navController!!.navigate(R.id.action_startedRunFragment_to_runFragment)
-        }
-    }
+
+//    private fun saveData() {
+//        val bounds = LatLngBounds(
+//            LatLng(coords[0],coords[2]),
+//            LatLng(coords[1],coords[3])
+//        )
+//        mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds, 25))
+//        mMap.snapshot { bmp ->
+//            val avgSpeed = round((distance/time)*10) / 10f
+//            val dateTimeStamp = Calendar.getInstance().timeInMillis
+//            val run = Run(bmp, dateTimeStamp, avgSpeed.toFloat(), distance.toFloat(), time)
+//            MainActivity.runDao.insertRun(run)
+//            navController!!.navigate(R.id.action_startedRunFragment_to_runFragment)
+//        }
+//    }
 
     private fun stopTracking() {
+        commandTracker("Stop")
         latitude = 0.0
         longitude = 0.0
-        fusedLocationProviderClient.removeLocationUpdates(locationCallBack)
+//        fusedLocationProviderClient.removeLocationUpdates(locationCallBack)
     }
 
     @SuppressLint("MissingPermission")
     private fun startTracking() {
-        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null)
-        //isTracking = true
+//        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null)
+        commandTracker("Start")
     }
 
     override fun onMapReady(googleMap: GoogleMap?) {
@@ -172,21 +170,22 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
 
         mMap.uiSettings.isZoomControlsEnabled = true
 
-        setUpMap()
+//        setUpMap()
     }
 
-    @SuppressLint("MissingPermission")
-    private fun setUpMap() {
-        mMap.isMyLocationEnabled = true
-        fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
-            if (location != null) {
-                lastLocation = location
-                val currentLatLong = LatLng(location.latitude, location.longitude)
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 18f))
-                updateUI(location)
-            }
-        }
-    }
+//    @SuppressLint("MissingPermission")
+//    private fun setUpMap() {
+//        mMap.isMyLocationEnabled = true
+//        fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+//            if (location != null) {
+//                lastLocation = location
+//                val currentLatLong = LatLng(location.latitude, location.longitude)
+//                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 18f))
+//                updateUI(location)
+//            }
+//        }
+//    }
+
 
     private fun updateUI(location: Location){
         if(location.hasSpeed()) {
@@ -230,5 +229,13 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
             latitude = lat
             longitude = long
         }
+    }
+
+    private fun commandTracker(action: String) {
+        Intent(requireContext(), RunTracking::class.java).also {
+            it.action = action
+            requireContext().startService(it)
+        }
+
     }
 }

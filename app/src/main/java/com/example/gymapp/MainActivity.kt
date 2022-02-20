@@ -1,10 +1,12 @@
 package com.example.gymapp
 
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBar
+import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
@@ -21,11 +23,14 @@ class MainActivity : AppCompatActivity() {
         lateinit var databaseHandler: DatabaseHandler
         lateinit var runningDB: RunDatabase
         lateinit var runDao: RunDAO
+        lateinit var navController: NavController
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        navigateToRun(intent)
 
         databaseHandler = DatabaseHandler(this)
 
@@ -33,7 +38,7 @@ class MainActivity : AppCompatActivity() {
         runDao = runningDB.getRunDao()
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
-        val navController = findNavController(R.id.fragment)
+        navController = findNavController(R.id.fragment)
         val appBarConfiguration = AppBarConfiguration(setOf(R.id.homeFragment, R.id.workoutFragment,
             R.id.exerciseFragment, R.id.runFragment))
 
@@ -50,5 +55,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return super.onContextItemSelected(item)
+    }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        navigateToRun(intent)
+    }
+
+    private fun navigateToRun(intent: Intent?) {
+        if(intent?.action == "ShowTrackingFrag") {
+            navController.navigate(R.id.action_global_to_startedRunFragment)
+        }
     }
 }
