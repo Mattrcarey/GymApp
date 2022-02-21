@@ -29,7 +29,6 @@ class StartedRunFragment : Fragment(R.layout.fragment_started_run), OnMapReadyCa
     private var pathPoints = mutableListOf<Polyline>()
     private var timeRunMillisecs: Long = 0
 
-    private lateinit var lastLocation: Location
     private lateinit var currentSpeed: TextView
     private lateinit var miles: TextView
     private lateinit var timer: Chronometer
@@ -67,6 +66,25 @@ class StartedRunFragment : Fragment(R.layout.fragment_started_run), OnMapReadyCa
 
 
     private fun subscribeToObservers() {
+        RunTracking.isTracking.observe(viewLifecycleOwner, Observer {
+            isTracking = it
+            if(isTracking) {
+                timer.base = SystemClock.elapsedRealtime() - RunTracking.timeRunMillisecs.value!!
+                timer.start()
+                startRun.visibility = View.INVISIBLE
+                pauseRun.visibility = View.VISIBLE
+                endRun.visibility = View.VISIBLE
+                resumeRun.visibility = View.GONE
+            } else {
+                timer.base = SystemClock.elapsedRealtime() - RunTracking.timeRunMillisecs.value!!
+                timer.stop()
+                endRun.visibility = View.VISIBLE
+                startRun.visibility = View.INVISIBLE
+                resumeRun.visibility = View.VISIBLE
+                pauseRun.visibility = View.INVISIBLE
+            }
+        })
+
         RunTracking.pathPoints.observe(viewLifecycleOwner, Observer {
             pathPoints = it
             addLastLocation()
@@ -124,6 +142,7 @@ class StartedRunFragment : Fragment(R.layout.fragment_started_run), OnMapReadyCa
 
 
     override fun onResume() {
+        subscribeToObservers()
         mapFragment.getMapAsync(this)
         super.onResume()
     }
@@ -142,32 +161,18 @@ class StartedRunFragment : Fragment(R.layout.fragment_started_run), OnMapReadyCa
         endRun = requireView().findViewById<Button>(R.id.btnEndRun)
 
         startRun.setOnClickListener { view ->
-            timer.base = SystemClock.elapsedRealtime() - timeRunMillisecs
-            timer.start()
             startTracking()
-            startRun.visibility = View.INVISIBLE
-            pauseRun.visibility = View.VISIBLE
-            endRun.visibility = View.VISIBLE
         }
 
         pauseRun.setOnClickListener { view ->
-            timer.stop()
             stopTracking()
-            resumeRun.visibility = View.VISIBLE
-            pauseRun.visibility = View.INVISIBLE
         }
 
         resumeRun.setOnClickListener { view ->
-            timer.base = SystemClock.elapsedRealtime() - timeRunMillisecs
-            timer.start()
             startTracking()
-            pauseRun.visibility = View.VISIBLE
-            resumeRun.visibility = View.GONE
-
         }
 
         endRun.setOnClickListener { view ->
-            timer.stop()
             stopTracking()
 //            saveData()
         }

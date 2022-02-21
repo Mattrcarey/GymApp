@@ -117,10 +117,10 @@ class RunTracking: LifecycleService() {
     private fun updateLocationTracking(isTracking: Boolean) {
         if(isTracking) {
             val locationRequest = LocationRequest.create().apply {
-                interval = 5000
+                interval = 3000
                 fastestInterval = 2000
                 priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-                maxWaitTime = 5000
+                maxWaitTime = 3000
             }
             fusedLocationProviderClient.requestLocationUpdates(
                 locationRequest,
@@ -153,6 +153,7 @@ class RunTracking: LifecycleService() {
             isAccessible = true
             set(notificationBuilder, ArrayList<NotificationCompat.Action>())
         }
+
         notificationBuilder = notificationBuilder.addAction(
             R.drawable.ic_baseline_directions_run_24,
             notificationText,
@@ -160,6 +161,9 @@ class RunTracking: LifecycleService() {
         )
         notificationManger.notify(1, notificationBuilder.build())
     }
+
+
+
 
 
     val locationCallback = object : LocationCallback() {
@@ -196,11 +200,8 @@ class RunTracking: LifecycleService() {
     private fun startForegroundService() {
         startTimer()
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE)
-                as NotificationManager
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel(notificationManager)
-        }
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        createNotificationChannel(notificationManager)
 
         notificationBuilder = NotificationCompat.Builder(this, "Tracking_Channel")
             .setAutoCancel(false)
