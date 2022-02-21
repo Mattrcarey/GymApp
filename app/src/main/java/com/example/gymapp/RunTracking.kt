@@ -20,6 +20,10 @@ import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.maps.model.LatLng
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 typealias Polyline = MutableList<LatLng>
 typealias Polylines = MutableList<Polyline>
@@ -29,23 +33,32 @@ class RunTracking: LifecycleService() {
     var isFirstRun = true
 
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    lateinit var notificationBuilder: NotificationCompat.Builder
+
+    private val timeRunInSeconds = MutableLiveData<Long>()
 
     companion object{
+        val timeRunMillisecs = MutableLiveData<Long>()
         val isTracking = MutableLiveData<Boolean>()
         val pathPoints = MutableLiveData<Polylines>()
     }
 
     private fun postInitialValues() {
+        timeRunInSeconds.postValue(0L)
+        timeRunMillisecs.postValue(0L)
         isTracking.postValue(false)
         pathPoints.postValue(mutableListOf())
     }
 
     override fun onCreate() {
         super.onCreate()
+//        notificationBuilder =
+        postInitialValues()
         fusedLocationProviderClient = FusedLocationProviderClient(this)
 
         isTracking.observe(this, Observer {
-            updateLocationtracking(it)
+            updateLocationTracking(it)
+            updateNotificationTimer(it)
         })
     }
 
@@ -57,24 +70,51 @@ class RunTracking: LifecycleService() {
                         startForegroundService()
                         isFirstRun = false
                     } else {
-                        print("PlaceHolderResume")
+                        startTimer()
                     }
                 }
                 "Pause" -> {
-                    print("PlaceHolderPause")
+                    isTracking.postValue(false)
+                    isTimerEnabled = false
                 }
                 "Stop" -> {
                     print("PlaceHolderStop")
                 }
-
             }
         }
         return super.onStartCommand(intent, flags, startId)
     }
 
+    private var isTimerEnabled = false
+    private var lapTime = 0L
+    private var timeRun = 0L
+    private var timeStarted = 0L
+    private var lastSecondTimestamp = 0L
+
+
+    private fun startTimer(){
+        addEmptyPolyline()
+        isTracking.postValue(true)
+        timeStarted = System.currentTimeMillis()
+        isTimerEnabled = true
+        CoroutineScope(Dispatchers.Main).launch {
+            while(isTracking.value!!) {
+                lapTime = System.currentTimeMillis() - timeStarted
+
+                timeRunMillisecs.postValue(timeRun + lapTime)
+                if(timeRunMillisecs.value!! >= lastSecondTimestamp + 1000L) {
+                    timeRunInSeconds.postValue(timeRunInSeconds.value!! + 1)
+                    lastSecondTimestamp += 1000L
+                }
+                delay(50L)
+            }
+            timeRun += lapTime
+        }
+    }
+
 
     @SuppressLint("MissingPermission")
-    private fun updateLocationtracking(isTracking: Boolean) {
+    private fun updateLocationTracking(isTracking: Boolean) {
         if(isTracking) {
             val locationRequest = LocationRequest.create().apply {
                 interval = 5000
@@ -90,6 +130,35 @@ class RunTracking: LifecycleService() {
         } else {
             fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         }
+    }
+
+
+    private fun updateNotificationTimer(isTracking: Boolean) {
+        val notificationText = if(isTracking) "Pause" else "Resume"
+        val pendingIntent = if(isTracking) {
+            val pauseIntent = Intent(this, RunTracking::class.java).apply {
+                action = "Pause"
+            }
+            PendingIntent.getService(this, 1, pauseIntent, FLAG_UPDATE_CURRENT)
+        } else {
+            val resumeIntent = Intent(this, RunTracking::class.java).apply {
+                action = "Start"
+            }
+            PendingIntent.getService(this, 2, resumeIntent, FLAG_UPDATE_CURRENT)
+        }
+
+        val notificationManger = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        notificationBuilder.javaClass.getDeclaredField("mActions").apply {
+            isAccessible = true
+            set(notificationBuilder, ArrayList<NotificationCompat.Action>())
+        }
+        notificationBuilder = notificationBuilder.addAction(
+            R.drawable.ic_baseline_directions_run_24,
+            notificationText,
+            pendingIntent
+        )
+        notificationManger.notify(1, notificationBuilder.build())
     }
 
 
@@ -125,8 +194,7 @@ class RunTracking: LifecycleService() {
 
 
     private fun startForegroundService() {
-        addEmptyPolyline()
-        isTracking.postValue(true)
+        startTimer()
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE)
                 as NotificationManager
@@ -134,7 +202,7 @@ class RunTracking: LifecycleService() {
             createNotificationChannel(notificationManager)
         }
 
-        val notificationBuilder = NotificationCompat.Builder(this, "Tracking_Channel")
+        notificationBuilder = NotificationCompat.Builder(this, "Tracking_Channel")
             .setAutoCancel(false)
             .setOngoing(true)
             .setSmallIcon(R.drawable.ic_baseline_directions_run_24)
@@ -143,7 +211,22 @@ class RunTracking: LifecycleService() {
             .setContentIntent(getMainActivityPendingIntent())
 
         startForeground(1, notificationBuilder.build())
+
+        timeRunInSeconds.observe(this, Observer {
+            val notification = notificationBuilder
+                .setContentText(formatTime(timeRunInSeconds.value!!))
+            notificationManager.notify(1, notification.build())
+        })
     }
+
+
+    private fun formatTime(seconds: Long) : String {
+        val hours : Long = seconds / 3600
+        val minutes : Long = (seconds % 3600) / 60
+        val seconds : Long = seconds % 60
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
 
     private fun getMainActivityPendingIntent() = PendingIntent.getActivity(
         this,

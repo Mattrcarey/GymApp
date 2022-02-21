@@ -1,7 +1,6 @@
 package com.example.gymapp
 
 import android.annotation.SuppressLint
-import android.app.Service
 import android.content.Intent
 import android.location.Location
 import android.os.Bundle
@@ -13,29 +12,24 @@ import android.widget.Button
 import android.widget.Chronometer
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.LifecycleService
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
-import com.example.gymapp.runDB.Run
-import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.LatLngBounds
 import com.google.android.gms.maps.model.PolylineOptions
-import java.lang.Double.max
-import java.lang.Double.min
-import java.util.*
-import kotlin.math.abs
-import kotlin.math.pow
-import kotlin.math.round
-import kotlin.math.sqrt
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.SupportMapFragment
 
 
-class StartedRunFragment : Fragment(), OnMapReadyCallback {
+class StartedRunFragment : Fragment(R.layout.fragment_started_run), OnMapReadyCallback {
+
+    private lateinit var mapFragment: SupportMapFragment
     private lateinit var mMap: GoogleMap
+    private var isTracking = false
+    private var pathPoints = mutableListOf<Polyline>()
+    private var timeRunMillisecs: Long = 0
+
     private lateinit var lastLocation: Location
-//    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var currentSpeed: TextView
     private lateinit var miles: TextView
     private lateinit var timer: Chronometer
@@ -43,8 +37,6 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
     private lateinit var pauseRun: Button
     private lateinit var resumeRun: Button
     private lateinit var endRun: Button
-    private lateinit var locationRequest: LocationRequest
-    private lateinit var locationCallBack: LocationCallback
     private var navController : NavController?= null
     private var coords: MutableList<Double> = mutableListOf(91.0,-91.0,181.0,-181.0)
     private var time: Long = 0
@@ -66,26 +58,76 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
             container,
             false
         )
-        val mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+
+        mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync (this)
-
-//        locationRequest = LocationRequest.create().apply {
-//            interval = 5000
-//            fastestInterval = 2000
-//            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-//            maxWaitTime = 5000
-//        }
-//        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(applicationContext)
-
-//        locationCallBack = object : LocationCallback() {
-//            override fun onLocationResult(locationResult: LocationResult?) {
-//                locationResult ?: return
-//                updateUI(locationResult.lastLocation)
-//            }
-//        }
 
         return view
     }
+
+
+    private fun subscribeToObservers() {
+        RunTracking.pathPoints.observe(viewLifecycleOwner, Observer {
+            pathPoints = it
+            addLastLocation()
+            moveCameraToUser()
+        })
+
+        RunTracking.timeRunMillisecs.observe(viewLifecycleOwner, Observer {
+            timeRunMillisecs = it
+        })
+    }
+
+
+    private fun moveCameraToUser() {
+        if(pathPoints.isNotEmpty() && pathPoints.last().isNotEmpty() && ::mMap.isInitialized) {
+            mMap.animateCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                    pathPoints.last().last(),
+                    18F
+                )
+            )
+        }
+    }
+
+
+    private fun addAllPolylines() {
+        for(polyline in pathPoints) {
+            val polylineOptions = PolylineOptions()
+                .color(-0x7e387c)
+                .clickable(false)
+                .addAll(polyline)
+
+            if(::mMap.isInitialized) {
+                mMap.addPolyline(polylineOptions)
+            }
+        }
+    }
+
+
+    private fun addLastLocation() {
+        if(pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
+            val penultimateLatLng = pathPoints.last()[pathPoints.last().size -2]
+            val lastLatLng = pathPoints.last().last()
+            val polyLineOptions = PolylineOptions()
+                .color(-0x7e387c)
+                .clickable(false)
+                .add(
+                    penultimateLatLng,
+                    lastLatLng
+                )
+            if(this::mMap.isInitialized) {
+                mMap.addPolyline(polyLineOptions)
+            }
+        }
+    }
+
+
+    override fun onResume() {
+        mapFragment.getMapAsync(this)
+        super.onResume()
+    }
+
 
     @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -100,7 +142,7 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
         endRun = requireView().findViewById<Button>(R.id.btnEndRun)
 
         startRun.setOnClickListener { view ->
-            timer.base = SystemClock.elapsedRealtime() - time
+            timer.base = SystemClock.elapsedRealtime() - timeRunMillisecs
             timer.start()
             startTracking()
             startRun.visibility = View.INVISIBLE
@@ -110,13 +152,13 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
 
         pauseRun.setOnClickListener { view ->
             timer.stop()
-            time = SystemClock.elapsedRealtime() - timer.base
             stopTracking()
             resumeRun.visibility = View.VISIBLE
             pauseRun.visibility = View.INVISIBLE
         }
 
         resumeRun.setOnClickListener { view ->
+            timer.base = SystemClock.elapsedRealtime() - timeRunMillisecs
             timer.start()
             startTracking()
             pauseRun.visibility = View.VISIBLE
@@ -126,11 +168,11 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
 
         endRun.setOnClickListener { view ->
             timer.stop()
-            time = SystemClock.elapsedRealtime() - timer.base
             stopTracking()
 //            saveData()
         }
 
+        subscribeToObservers()
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -151,85 +193,72 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
 //    }
 
     private fun stopTracking() {
-        commandTracker("Stop")
+        commandTracker("Pause")
         latitude = 0.0
         longitude = 0.0
-//        fusedLocationProviderClient.removeLocationUpdates(locationCallBack)
     }
 
     @SuppressLint("MissingPermission")
     private fun startTracking() {
-//        fusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallBack, null)
         commandTracker("Start")
     }
 
+    @SuppressLint("MissingPermission")
     override fun onMapReady(googleMap: GoogleMap?) {
         if (googleMap != null) {
             mMap = googleMap
         }
 
         mMap.uiSettings.isZoomControlsEnabled = true
-
-//        setUpMap()
+        addAllPolylines()
+        mMap.isMyLocationEnabled = true
+        moveCameraToUser()
     }
 
-//    @SuppressLint("MissingPermission")
-//    private fun setUpMap() {
-//        mMap.isMyLocationEnabled = true
-//        fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
-//            if (location != null) {
-//                lastLocation = location
-//                val currentLatLong = LatLng(location.latitude, location.longitude)
-//                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLatLong, 18f))
-//                updateUI(location)
-//            }
+
+//    private fun updateUI(location: Location){
+//        if(location.hasSpeed()) {
+//            currentSpeed.setText(String.format("%.2f",location.speed.toDouble()))
 //        }
+//        else {
+//            currentSpeed.setText("00.00")
+//        }
+//        if (location.latitude < coords[0]){
+//            coords[0] = location.latitude
+//        }
+//        if (location.latitude > coords[1]){
+//            coords[1] = location.latitude
+//        }
+//        if (location.longitude < coords[2]){
+//            coords[2] = location.longitude
+//        }
+//        if (location.longitude > coords[3]){
+//            coords[3] = location.longitude
+//        }
+//        updateDistance(location.latitude, location.longitude)
 //    }
 
-
-    private fun updateUI(location: Location){
-        if(location.hasSpeed()) {
-            currentSpeed.setText(String.format("%.2f",location.speed.toDouble()))
-        }
-        else {
-            currentSpeed.setText("00.00")
-        }
-        if (location.latitude < coords[0]){
-            coords[0] = location.latitude
-        }
-        if (location.latitude > coords[1]){
-            coords[1] = location.latitude
-        }
-        if (location.longitude < coords[2]){
-            coords[2] = location.longitude
-        }
-        if (location.longitude > coords[3]){
-            coords[3] = location.longitude
-        }
-        updateDistance(location.latitude, location.longitude)
-    }
-
-    private fun updateDistance(lat: Double, long: Double){
-        if (latitude == 0.0 && longitude == 0.0){
-            latitude = lat
-            longitude = long
-        }
-        else {
-            val latdif = abs(max(lat,latitude) - min(lat,latitude))
-            val longdif = abs(max(long,longitude) - min(long,longitude))
-            distance += sqrt(latdif.pow(2) + longdif.pow(2))
-            mMap.addPolyline(PolylineOptions()
-                .color(-0x7e387c)
-                .clickable(false)
-                .add(
-                    LatLng(latitude, longitude),
-                    LatLng(lat,long)
-                ))
-            miles.setText(String.format("%.2f",distance))
-            latitude = lat
-            longitude = long
-        }
-    }
+//    private fun updateDistance(lat: Double, long: Double){
+//        if (latitude == 0.0 && longitude == 0.0){
+//            latitude = lat
+//            longitude = long
+//        }
+//        else {
+//            val latdif = abs(max(lat,latitude) - min(lat,latitude))
+//            val longdif = abs(max(long,longitude) - min(long,longitude))
+//            distance += sqrt(latdif.pow(2) + longdif.pow(2))
+//            mMap.addPolyline(PolylineOptions()
+//                .color(-0x7e387c)
+//                .clickable(false)
+//                .add(
+//                    LatLng(latitude, longitude),
+//                    LatLng(lat,long)
+//                ))
+//            miles.setText(String.format("%.2f",distance))
+//            latitude = lat
+//            longitude = long
+//        }
+//    }
 
     private fun commandTracker(action: String) {
         Intent(requireContext(), RunTracking::class.java).also {

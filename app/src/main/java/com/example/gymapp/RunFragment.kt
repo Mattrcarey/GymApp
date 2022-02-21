@@ -29,16 +29,10 @@ import com.example.gymapp.runDB.RunDAO
 
 class RunFragment : Fragment(), OnItemClickListener {
 
+    lateinit var permissionsLauncher: ActivityResultLauncher<Array<String>>
+
     private var navController : NavController?= null
     private var runDao : RunDAO?= null
-    var requestPermissionsLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions())
-    { permissions ->
-        permissions.entries.forEach {
-            Log.e("DEBUG", "${it.key} = ${it.value}")
-        }
-    }
-
 
 
     override fun onCreateView(
@@ -46,6 +40,12 @@ class RunFragment : Fragment(), OnItemClickListener {
         savedInstanceState: Bundle?
     ): View? {
         val applicationContext = requireContext().applicationContext
+        permissionsLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions())
+        { permissions ->
+            permissions.entries.forEach {
+                Log.e("DEBUG", "${it.key} = ${it.value}")
+            }
+        }
         return inflater.inflate(R.layout.fragment_run, container, false)
     }
 
@@ -101,47 +101,22 @@ class RunFragment : Fragment(), OnItemClickListener {
             Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
     }
 
-    @RequiresApi(Build.VERSION_CODES.Q)
-    fun hasBackgroundLocationPermission(context: Context) : Boolean {
-        return (ActivityCompat.checkSelfPermission(context,
-            Manifest.permission.ACCESS_BACKGROUND_LOCATION) == PackageManager.PERMISSION_GRANTED)
-    }
-
     fun hasLocationPermission(context: Context) : Boolean {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
-            return (hasFineLocationPermission(context) && hasCoarseLocationPermission(context))
-        } else {
-            return (hasFineLocationPermission(context) &&
-                    hasCoarseLocationPermission(context) &&
-                    hasBackgroundLocationPermission(context))
-        }
+        return (hasFineLocationPermission(context) && hasCoarseLocationPermission(context))
     }
-//        private fun hasLocationPermission(context: Context) : Boolean {
-//            return hasFineLocationPermission(context)
-//        }
 
     private fun requestMyPermissions() {
         val applicationContext = requireContext().applicationContext
-
         var permissionsNeeded = mutableListOf<String>()
-        if (!hasLocationPermission(applicationContext)) {
             if (!hasFineLocationPermission(applicationContext)) {
                 permissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
             }
             if (!hasCoarseLocationPermission(applicationContext)) {
                 permissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
             }
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                if (!hasBackgroundLocationPermission(applicationContext)) {
-                    permissionsNeeded.add(Manifest.permission.ACCESS_BACKGROUND_LOCATION)
-                }
-            }
-        }
 
         if (permissionsNeeded.isNotEmpty()) {
-            for(x in permissionsNeeded)
-                requestPermissionsLauncher.launch(permissionsNeeded.toTypedArray())
+            permissionsLauncher.launch(permissionsNeeded.toTypedArray())
         }
-
     }
 }
