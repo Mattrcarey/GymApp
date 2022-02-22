@@ -2,7 +2,6 @@ package com.example.gymapp
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.location.Location
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.LayoutInflater
@@ -21,7 +20,7 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 
 
-class StartedRunFragment : Fragment(R.layout.fragment_started_run), OnMapReadyCallback {
+class StartedRunFragment : Fragment(), OnMapReadyCallback {
 
     private lateinit var mapFragment: SupportMapFragment
     private lateinit var mMap: GoogleMap
@@ -93,6 +92,14 @@ class StartedRunFragment : Fragment(R.layout.fragment_started_run), OnMapReadyCa
 
         RunTracking.timeRunMillisecs.observe(viewLifecycleOwner, Observer {
             timeRunMillisecs = it
+        })
+
+        RunTracking.speed.observe(viewLifecycleOwner, Observer {
+            currentSpeed.text = String.format("%.2f",it.toDouble())
+        })
+
+        RunTracking.distance.observe(viewLifecycleOwner, Observer {
+            miles.text = String.format("%.2f", it)
         })
     }
 
@@ -217,7 +224,6 @@ class StartedRunFragment : Fragment(R.layout.fragment_started_run), OnMapReadyCa
         mMap.uiSettings.isZoomControlsEnabled = true
         addAllPolylines()
         mMap.isMyLocationEnabled = true
-        moveCameraToUser()
     }
 
 
@@ -243,27 +249,6 @@ class StartedRunFragment : Fragment(R.layout.fragment_started_run), OnMapReadyCa
 //        updateDistance(location.latitude, location.longitude)
 //    }
 
-//    private fun updateDistance(lat: Double, long: Double){
-//        if (latitude == 0.0 && longitude == 0.0){
-//            latitude = lat
-//            longitude = long
-//        }
-//        else {
-//            val latdif = abs(max(lat,latitude) - min(lat,latitude))
-//            val longdif = abs(max(long,longitude) - min(long,longitude))
-//            distance += sqrt(latdif.pow(2) + longdif.pow(2))
-//            mMap.addPolyline(PolylineOptions()
-//                .color(-0x7e387c)
-//                .clickable(false)
-//                .add(
-//                    LatLng(latitude, longitude),
-//                    LatLng(lat,long)
-//                ))
-//            miles.setText(String.format("%.2f",distance))
-//            latitude = lat
-//            longitude = long
-//        }
-//    }
 
     private fun commandTracker(action: String) {
         Intent(requireContext(), RunTracking::class.java).also {

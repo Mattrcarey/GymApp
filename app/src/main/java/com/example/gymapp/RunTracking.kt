@@ -9,8 +9,8 @@ import android.app.PendingIntent.FLAG_UPDATE_CURRENT
 import android.content.Context
 import android.content.Intent
 import android.location.Location
-import android.os.Build
 import android.os.Looper
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
@@ -24,6 +24,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.math.*
 
 typealias Polyline = MutableList<LatLng>
 typealias Polylines = MutableList<Polyline>
@@ -36,29 +37,33 @@ class RunTracking: LifecycleService() {
     lateinit var notificationBuilder: NotificationCompat.Builder
 
     private val timeRunInSeconds = MutableLiveData<Long>()
+    private var latitude: Double = 0.0
+    private var longitude : Double = 0.0
 
     companion object{
         val timeRunMillisecs = MutableLiveData<Long>()
         val isTracking = MutableLiveData<Boolean>()
         val pathPoints = MutableLiveData<Polylines>()
+        val speed = MutableLiveData<Float>()
+        val distance = MutableLiveData<Double>()
     }
 
     private fun postInitialValues() {
         timeRunInSeconds.postValue(0L)
         timeRunMillisecs.postValue(0L)
+        speed.postValue(0F)
+        distance.postValue(0.0)
         isTracking.postValue(false)
         pathPoints.postValue(mutableListOf())
     }
 
     override fun onCreate() {
         super.onCreate()
-//        notificationBuilder =
         postInitialValues()
         fusedLocationProviderClient = FusedLocationProviderClient(this)
-
         isTracking.observe(this, Observer {
             updateLocationTracking(it)
-            updateNotificationTimer(it)
+            updateNotification(it)
         })
     }
 
@@ -76,6 +81,7 @@ class RunTracking: LifecycleService() {
                 "Pause" -> {
                     isTracking.postValue(false)
                     isTimerEnabled = false
+                    speed.postValue(0F )
                 }
                 "Stop" -> {
                     print("PlaceHolderStop")
@@ -117,10 +123,10 @@ class RunTracking: LifecycleService() {
     private fun updateLocationTracking(isTracking: Boolean) {
         if(isTracking) {
             val locationRequest = LocationRequest.create().apply {
-                interval = 3000
+                interval = 5000
                 fastestInterval = 2000
                 priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-                maxWaitTime = 3000
+                maxWaitTime = 5000
             }
             fusedLocationProviderClient.requestLocationUpdates(
                 locationRequest,
@@ -133,7 +139,7 @@ class RunTracking: LifecycleService() {
     }
 
 
-    private fun updateNotificationTimer(isTracking: Boolean) {
+    private fun updateNotification(isTracking: Boolean) {
         val notificationText = if(isTracking) "Pause" else "Resume"
         val pendingIntent = if(isTracking) {
             val pauseIntent = Intent(this, RunTracking::class.java).apply {
@@ -163,9 +169,6 @@ class RunTracking: LifecycleService() {
     }
 
 
-
-
-
     val locationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult?) {
             super.onLocationResult(result)
@@ -187,6 +190,23 @@ class RunTracking: LifecycleService() {
                 last().add(position)
                 pathPoints.postValue(this)
             }
+            if (location.hasSpeed()) {
+                speed.postValue(location.speed)
+            } else { speed.postValue(0F )}
+            updateDistance(location.latitude, location.longitude)
+        }
+    }
+
+    private fun updateDistance(lat: Double, long: Double){
+        if (latitude == 0.0 && longitude == 0.0) {
+            latitude = lat
+            longitude = long
+        } else {
+            val results = FloatArray(1)
+            Location.distanceBetween(latitude, longitude, lat, long, results)
+            distance.postValue(distance.value?.plus(results[0]*0.000621371)) // weird number converts meters to miles
+            latitude = lat
+            longitude = long
         }
     }
 
