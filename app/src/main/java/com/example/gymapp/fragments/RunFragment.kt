@@ -1,10 +1,8 @@
-package com.example.gymapp
+package com.example.gymapp.fragments
 
 import android.Manifest
-import android.app.Activity
 import android.content.Context
 import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -14,17 +12,17 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.Transformations
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.gymapp.MainActivity
+import com.example.gymapp.R
+import com.example.gymapp.adapters.OnItemClickListener
+import com.example.gymapp.adapters.RunAdapter
 import com.example.gymapp.runDB.Run
 import com.example.gymapp.runDB.RunDAO
-
 
 
 class RunFragment : Fragment(), OnItemClickListener {
@@ -34,12 +32,11 @@ class RunFragment : Fragment(), OnItemClickListener {
     private var navController : NavController?= null
     private var runDao : RunDAO?= null
 
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val applicationContext = requireContext().applicationContext
+        ): View?
+    {
         permissionsLauncher = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions())
         { permissions ->
             permissions.entries.forEach {
@@ -49,73 +46,83 @@ class RunFragment : Fragment(), OnItemClickListener {
         return inflater.inflate(R.layout.fragment_run, container, false)
     }
 
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?)
+    {
         super.onViewCreated(view, savedInstanceState)
         runDao = MainActivity.runDao
         navController = Navigation.findNavController(view)
         val applicationContext = requireContext().applicationContext
         val newRun : Button = requireView().findViewById<Button>(R.id.startRunningfrag)
-        newRun.setOnClickListener { view ->
-            if (!hasLocationPermission(applicationContext)) {
+        newRun.setOnClickListener {
+            if (!hasLocationPermission(applicationContext))
+            {
                 requestMyPermissions()
-            }
-            else {
+            } else {
                 navController!!.navigate(R.id.action_runFragment_to_startedRunFragment)
             }
         }
     }
 
-    override fun onItemClick(position: Int) {
-        val applicationContext = requireContext().applicationContext
-        val runlist : ArrayList<Run> = MainActivity.runDao.getRuns() as ArrayList<Run>
-        val clickedItem : Run = runlist[position]
-        val bundle = Bundle()
+    override fun onItemClick(position: Int)
+    {
+//        val runList : ArrayList<Run> = MainActivity.runDao.getRuns() as ArrayList<Run>
+//        val clickedItem : Run = runList[position]
+//        val bundle = Bundle()
 //        bundle.putInt("EID", clickedItem.exerciseID)
 //        navController?.navigate(R.id.action_exerciseFragment_to_exerciseEntry, bundle)
-//        TODO on click move to a new run page with more details
+//        TODO: on click move to a new run page displaying more details
     }
 
-    private fun viewRuns(){
+    private fun viewRuns()
+    {
         val applicationContext = requireContext().applicationContext
         val runList : ArrayList<Run> = MainActivity.runDao.getRuns() as ArrayList<Run>
         val adapter =  RunAdapter(runList, this)
         val rv : RecyclerView = requireView().findViewById(R.id.rvRunList)
-        rv.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false ) as RecyclerView.LayoutManager
+        rv.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false )
         rv.adapter = adapter
     }
 
-    override fun onResume() {
+    override fun onResume()
+    {
         viewRuns()
         super.onResume()
     }
 
 
-    private fun hasFineLocationPermission(context: Context) : Boolean {
+    private fun hasFineLocationPermission(context: Context) : Boolean
+    {
         return (ActivityCompat.checkSelfPermission(context,
             Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED)
     }
 
-    private fun hasCoarseLocationPermission(context: Context) : Boolean {
+    private fun hasCoarseLocationPermission(context: Context) : Boolean
+    {
         return (ActivityCompat.checkSelfPermission(context,
             Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED)
     }
 
-    fun hasLocationPermission(context: Context) : Boolean {
+    private fun hasLocationPermission(context: Context) : Boolean
+    {
         return (hasFineLocationPermission(context) && hasCoarseLocationPermission(context))
     }
 
-    private fun requestMyPermissions() {
+    private fun requestMyPermissions()
+    {
         val applicationContext = requireContext().applicationContext
-        var permissionsNeeded = mutableListOf<String>()
-            if (!hasFineLocationPermission(applicationContext)) {
+        val permissionsNeeded = mutableListOf<String>()
+            if (!hasFineLocationPermission(applicationContext))
+            {
                 permissionsNeeded.add(Manifest.permission.ACCESS_FINE_LOCATION)
             }
-            if (!hasCoarseLocationPermission(applicationContext)) {
+
+            if (!hasCoarseLocationPermission(applicationContext))
+            {
                 permissionsNeeded.add(Manifest.permission.ACCESS_COARSE_LOCATION)
             }
 
-        if (permissionsNeeded.isNotEmpty()) {
+        if (permissionsNeeded.isNotEmpty())
+        {
             permissionsLauncher.launch(permissionsNeeded.toTypedArray())
         }
     }

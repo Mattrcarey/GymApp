@@ -1,4 +1,4 @@
-package com.example.gymapp
+package com.example.gymapp.fragments
 
 import android.annotation.SuppressLint
 import android.content.Intent
@@ -14,19 +14,22 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
+import com.example.gymapp.R
+import com.example.gymapp.services.Polyline
+import com.example.gymapp.services.RunTracking
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.PolylineOptions
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 
 
-class StartedRunFragment : Fragment(), OnMapReadyCallback {
-
+class StartedRunFragment : Fragment(), OnMapReadyCallback
+{
     private lateinit var mapFragment: SupportMapFragment
     private lateinit var mMap: GoogleMap
     private var isTracking = false
     private var pathPoints = mutableListOf<Polyline>()
-    private var timeRunMillisecs: Long = 0
+    private var timeRunMilliseconds: Long = 0
 
     private lateinit var currentSpeed: TextView
     private lateinit var miles: TextView
@@ -42,40 +45,33 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
     private var longitude : Double = 0.0
     private var distance: Double = 0.0
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-
-        val applicationContext = requireContext().applicationContext
-
-        val view: View = inflater.inflate(
-            com.example.gymapp.R.layout.fragment_started_run,
-            container,
-            false
-        )
-
+        ): View
+    {
+        val view: View = inflater.inflate(R.layout.fragment_started_run, container, false)
         mapFragment = childFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
         mapFragment.getMapAsync (this)
-
         return view
     }
 
-
-    private fun subscribeToObservers() {
-        RunTracking.isTracking.observe(viewLifecycleOwner, Observer {
+    private fun subscribeToObservers()
+    {
+        RunTracking.isTracking.observe(viewLifecycleOwner, Observer
+        {
             isTracking = it
-            if(isTracking) {
-                timer.base = SystemClock.elapsedRealtime() - RunTracking.timeRunMillisecs.value!!
+            if(isTracking)
+            {
+                timer.base = SystemClock.elapsedRealtime() - RunTracking.timeRunMilliseconds.value!!
                 timer.start()
                 startRun.visibility = View.INVISIBLE
                 pauseRun.visibility = View.VISIBLE
                 endRun.visibility = View.VISIBLE
                 resumeRun.visibility = View.GONE
             } else {
-                timer.base = SystemClock.elapsedRealtime() - RunTracking.timeRunMillisecs.value!!
+                timer.base = SystemClock.elapsedRealtime() - RunTracking.timeRunMilliseconds.value!!
                 timer.stop()
                 endRun.visibility = View.VISIBLE
                 startRun.visibility = View.INVISIBLE
@@ -84,39 +80,39 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
             }
         })
 
-        RunTracking.pathPoints.observe(viewLifecycleOwner, Observer {
+        RunTracking.pathPoints.observe(viewLifecycleOwner, Observer
+        {
             pathPoints = it
             addLastLocation()
             moveCameraToUser()
         })
 
-        RunTracking.timeRunMillisecs.observe(viewLifecycleOwner, Observer {
-            timeRunMillisecs = it
+        RunTracking.timeRunMilliseconds.observe(viewLifecycleOwner, Observer
+        {
+            timeRunMilliseconds = it
         })
 
-        RunTracking.speed.observe(viewLifecycleOwner, Observer {
+        RunTracking.speed.observe(viewLifecycleOwner, Observer
+        {
             currentSpeed.text = String.format("%.2f",it.toDouble())
         })
 
-        RunTracking.distance.observe(viewLifecycleOwner, Observer {
+        RunTracking.distance.observe(viewLifecycleOwner, Observer
+        {
             miles.text = String.format("%.2f", it)
         })
     }
 
-
-    private fun moveCameraToUser() {
-        if(pathPoints.isNotEmpty() && pathPoints.last().isNotEmpty() && ::mMap.isInitialized) {
-            mMap.animateCamera(
-                CameraUpdateFactory.newLatLngZoom(
-                    pathPoints.last().last(),
-                    18F
-                )
-            )
+    private fun moveCameraToUser()
+    {
+        if(pathPoints.isNotEmpty() && pathPoints.last().isNotEmpty() && ::mMap.isInitialized)
+        {
+            mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(pathPoints.last().last(), 18F))
         }
     }
 
-
-    private fun addAllPolylines() {
+    private fun addAllPolylines()
+    {
         for(polyline in pathPoints) {
             val polylineOptions = PolylineOptions()
                 .color(-0x7e387c)
@@ -128,7 +124,6 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
             }
         }
     }
-
 
     private fun addLastLocation() {
         if(pathPoints.isNotEmpty() && pathPoints.last().size > 1) {
@@ -147,15 +142,12 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
         }
     }
 
-
     override fun onResume() {
         subscribeToObservers()
         mapFragment.getMapAsync(this)
         super.onResume()
     }
 
-
-    @SuppressLint("MissingPermission")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         navController = Navigation.findNavController(view)
 
@@ -167,20 +159,12 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
         resumeRun = requireView().findViewById<Button>(R.id.btnResumeRun)
         endRun = requireView().findViewById<Button>(R.id.btnEndRun)
 
-        startRun.setOnClickListener { view ->
-            startTracking()
-        }
-
-        pauseRun.setOnClickListener { view ->
+        startRun.setOnClickListener { startTracking() }
+        pauseRun.setOnClickListener { stopTracking() }
+        resumeRun.setOnClickListener { startTracking() }
+        endRun.setOnClickListener {
             stopTracking()
-        }
-
-        resumeRun.setOnClickListener { view ->
-            startTracking()
-        }
-
-        endRun.setOnClickListener { view ->
-            stopTracking()
+            // TODO: Oops I broke saveData
 //            saveData()
         }
 
@@ -188,6 +172,7 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
         super.onViewCreated(view, savedInstanceState)
     }
 
+// TODO: Fix this method
 
 //    private fun saveData() {
 //        val bounds = LatLngBounds(
@@ -204,20 +189,23 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
 //        }
 //    }
 
-    private fun stopTracking() {
+    private fun stopTracking()
+    {
         commandTracker("Pause")
         latitude = 0.0
         longitude = 0.0
     }
 
-    @SuppressLint("MissingPermission")
-    private fun startTracking() {
+    private fun startTracking()
+    {
         commandTracker("Start")
     }
 
     @SuppressLint("MissingPermission")
-    override fun onMapReady(googleMap: GoogleMap?) {
-        if (googleMap != null) {
+    override fun onMapReady(googleMap: GoogleMap?)
+    {
+        if (googleMap != null)
+        {
             mMap = googleMap
         }
 
@@ -226,6 +214,7 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
         mMap.isMyLocationEnabled = true
     }
 
+// TODO: Maybe don't need this anymore
 
 //    private fun updateUI(location: Location){
 //        if(location.hasSpeed()) {
@@ -250,8 +239,9 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
 //    }
 
 
-    private fun commandTracker(action: String) {
-        Intent(requireContext(), RunTracking::class.java).also {
+    private fun commandTracker(action: String)
+    {
+        Intent(requireContext(), RunTracking::class.java).also{
             it.action = action
             requireContext().startService(it)
         }

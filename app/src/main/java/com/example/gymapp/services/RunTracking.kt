@@ -1,4 +1,4 @@
-package com.example.gymapp
+package com.example.gymapp.services
 
 import android.annotation.SuppressLint
 import android.app.NotificationChannel
@@ -10,11 +10,12 @@ import android.content.Context
 import android.content.Intent
 import android.location.Location
 import android.os.Looper
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.example.gymapp.MainActivity
+import com.example.gymapp.R
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationCallback
 import com.google.android.gms.location.LocationRequest
@@ -29,8 +30,8 @@ import kotlin.math.*
 typealias Polyline = MutableList<LatLng>
 typealias Polylines = MutableList<Polyline>
 
-class RunTracking: LifecycleService() {
-
+class RunTracking: LifecycleService()
+{
     var isFirstRun = true
 
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -40,24 +41,27 @@ class RunTracking: LifecycleService() {
     private var latitude: Double = 0.0
     private var longitude : Double = 0.0
 
-    companion object{
-        val timeRunMillisecs = MutableLiveData<Long>()
+    companion object
+    {
+        val timeRunMilliseconds = MutableLiveData<Long>()
         val isTracking = MutableLiveData<Boolean>()
         val pathPoints = MutableLiveData<Polylines>()
         val speed = MutableLiveData<Float>()
         val distance = MutableLiveData<Double>()
     }
 
-    private fun postInitialValues() {
+    private fun postInitialValues()
+    {
         timeRunInSeconds.postValue(0L)
-        timeRunMillisecs.postValue(0L)
+        timeRunMilliseconds.postValue(0L)
         speed.postValue(0F)
         distance.postValue(0.0)
         isTracking.postValue(false)
         pathPoints.postValue(mutableListOf())
     }
 
-    override fun onCreate() {
+    override fun onCreate()
+    {
         super.onCreate()
         postInitialValues()
         fusedLocationProviderClient = FusedLocationProviderClient(this)
@@ -67,22 +71,26 @@ class RunTracking: LifecycleService() {
         })
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int
+    {
         intent?.let {
             when (it.action) {
                 "Start" -> {
-                    if(isFirstRun) {
+                    if(isFirstRun)
+                    {
                         startForegroundService()
                         isFirstRun = false
                     } else {
                         startTimer()
                     }
                 }
+
                 "Pause" -> {
                     isTracking.postValue(false)
                     isTimerEnabled = false
                     speed.postValue(0F )
                 }
+
                 "Stop" -> {
                     print("PlaceHolderStop")
                 }
@@ -97,18 +105,19 @@ class RunTracking: LifecycleService() {
     private var timeStarted = 0L
     private var lastSecondTimestamp = 0L
 
-
-    private fun startTimer(){
+    private fun startTimer()
+    {
         addEmptyPolyline()
         isTracking.postValue(true)
         timeStarted = System.currentTimeMillis()
         isTimerEnabled = true
         CoroutineScope(Dispatchers.Main).launch {
-            while(isTracking.value!!) {
+            while(isTracking.value!!)
+            {
                 lapTime = System.currentTimeMillis() - timeStarted
-
-                timeRunMillisecs.postValue(timeRun + lapTime)
-                if(timeRunMillisecs.value!! >= lastSecondTimestamp + 1000L) {
+                timeRunMilliseconds.postValue(timeRun + lapTime)
+                if(timeRunMilliseconds.value!! >= lastSecondTimestamp + 1000L)
+                {
                     timeRunInSeconds.postValue(timeRunInSeconds.value!! + 1)
                     lastSecondTimestamp += 1000L
                 }
@@ -118,10 +127,11 @@ class RunTracking: LifecycleService() {
         }
     }
 
-
     @SuppressLint("MissingPermission")
-    private fun updateLocationTracking(isTracking: Boolean) {
-        if(isTracking) {
+    private fun updateLocationTracking(isTracking: Boolean)
+    {
+        if(isTracking)
+        {
             val locationRequest = LocationRequest.create().apply {
                 interval = 5000
                 fastestInterval = 2000
@@ -137,7 +147,6 @@ class RunTracking: LifecycleService() {
             fusedLocationProviderClient.removeLocationUpdates(locationCallback)
         }
     }
-
 
     private fun updateNotification(isTracking: Boolean) {
         val notificationText = if(isTracking) "Pause" else "Resume"
@@ -168,13 +177,14 @@ class RunTracking: LifecycleService() {
         notificationManger.notify(1, notificationBuilder.build())
     }
 
-
-    val locationCallback = object : LocationCallback() {
-        override fun onLocationResult(result: LocationResult?) {
+    private val locationCallback = object : LocationCallback() {
+        override fun onLocationResult(result: LocationResult) {
             super.onLocationResult(result)
-            if(isTracking.value!!) {
-                result?.locations?.let { locations ->
-                    for(location in locations) {
+            if(isTracking.value!!)
+            {
+                result.locations.let { locations ->
+                    for(location in locations)
+                    {
                         addPathPoint(location)
                     }
                 }
@@ -182,42 +192,44 @@ class RunTracking: LifecycleService() {
         }
     }
 
-
-    private fun addPathPoint(location: Location?) {
+    private fun addPathPoint(location: Location?)
+    {
         location?.let {
             val position = LatLng(location.latitude, location.longitude)
             pathPoints.value?.apply {
                 last().add(position)
                 pathPoints.postValue(this)
             }
-            if (location.hasSpeed()) {
+            if (location.hasSpeed())
+            {
                 speed.postValue(location.speed)
-            } else { speed.postValue(0F )}
+            } else { speed.postValue(0F ) }
             updateDistance(location.latitude, location.longitude)
         }
     }
 
-    private fun updateDistance(lat: Double, long: Double){
-        if (latitude == 0.0 && longitude == 0.0) {
+    private fun updateDistance(lat: Double, long: Double)
+    {
+        if (latitude == 0.0 && longitude == 0.0)
+        {
             latitude = lat
             longitude = long
         } else {
             val results = FloatArray(1)
             Location.distanceBetween(latitude, longitude, lat, long, results)
-            distance.postValue(distance.value?.plus(results[0]*0.000621371)) // weird number converts meters to miles
+            distance.postValue(distance.value?.plus(results[0] * 0.000621371)) // weird number converts meters to miles
             latitude = lat
             longitude = long
         }
     }
-
 
     private fun addEmptyPolyline() = pathPoints.value?.apply {
         add(mutableListOf())
         pathPoints.postValue(this)
     } ?: pathPoints.postValue(mutableListOf(mutableListOf()))
 
-
-    private fun startForegroundService() {
+    private fun startForegroundService()
+    {
         startTimer()
 
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -240,14 +252,13 @@ class RunTracking: LifecycleService() {
         })
     }
 
-
-    private fun formatTime(seconds: Long) : String {
+    private fun formatTime(seconds: Long) : String
+    {
         val hours : Long = seconds / 3600
         val minutes : Long = (seconds % 3600) / 60
         val seconds : Long = seconds % 60
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
     }
-
 
     private fun getMainActivityPendingIntent() = PendingIntent.getActivity(
         this,

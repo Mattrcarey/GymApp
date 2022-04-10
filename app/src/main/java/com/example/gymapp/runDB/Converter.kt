@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory
 import androidx.room.TypeConverter
 import java.io.ByteArrayOutputStream
 
-
 class Converter {
 
     //converts a bitmap to a byteArray

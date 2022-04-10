@@ -12,13 +12,13 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.example.gymapp.homeFragment"
+        android:name="com.example.gymapp.fragments.homeFragment"
         android:label="Home"
         tools:layout="@layout/fragment_home" />
 
     <fragment
         android:id="@+id/workoutFragment"
-        android:name="com.example.gymapp.WorkoutFragment"
+        android:name="com.example.gymapp.fragments.WorkoutFragment"
         android:label="Workouts"
         tools:layout="@layout/fragment_workout" >
         <action
@@ -28,7 +28,7 @@
 
     <fragment
         android:id="@+id/exerciseFragment"
-        android:name="com.example.gymapp.ExerciseFragment"
+        android:name="com.example.gymapp.fragments.ExerciseFragment"
         android:label="Exercises"
         tools:layout="@layout/fragment_exercise" >
         <action
@@ -38,7 +38,7 @@
 
     <fragment
         android:id="@+id/runFragment"
-        android:name="com.example.gymapp.RunFragment"
+        android:name="com.example.gymapp.fragments.RunFragment"
         android:label="Run"
         tools:layout="@layout/fragment_run" >
         <action
@@ -48,7 +48,7 @@
 
     <fragment
         android:id="@+id/workoutSetup"
-        android:name="com.example.gymapp.WorkoutSetup"
+        android:name="com.example.gymapp.fragments.WorkoutSetup"
         android:label="fragment_add_e_to_w"
         tools:layout="@layout/fragment_workout_setup" >
         <action
@@ -59,10 +59,9 @@
             app:destination="@id/ExerciseEntry" />
     </fragment>
 
-
     <fragment
         android:id="@+id/addEToW"
-        android:name="com.example.gymapp.AddNewEToW"
+        android:name="com.example.gymapp.fragments.AddNewEToW"
         android:label="fragment_add_new_e_to_w"
         tools:layout="@layout/fragment_add_e_to_w" >
         <action
@@ -72,13 +71,13 @@
 
     <fragment
         android:id="@+id/ExerciseEntry"
-        android:name="com.example.gymapp.ExerciseEntry"
+        android:name="com.example.gymapp.fragments.ExerciseEntry"
         android:label="fragment_exercise_entry"
         tools:layout="@layout/fragment_exercise_entry" />
 
     <fragment
         android:id="@+id/startedRunFragment"
-        android:name="com.example.gymapp.StartedRunFragment"
+        android:name="com.example.gymapp.fragments.StartedRunFragment"
         android:label="fragment_started_run"
         tools:layout="@layout/fragment_started_run" >
         <action
