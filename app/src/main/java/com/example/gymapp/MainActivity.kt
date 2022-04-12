@@ -16,10 +16,8 @@ import com.example.gymapp.runDB.RunDAO
 import com.example.gymapp.runDB.RunDatabase
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
-class MainActivity : AppCompatActivity()
-{
-    companion object
-    {
+class MainActivity : AppCompatActivity() {
+    companion object {
         lateinit var databaseHandler: DatabaseHandler
         lateinit var runningDB: RunDatabase
         lateinit var runDao: RunDAO
@@ -27,8 +25,7 @@ class MainActivity : AppCompatActivity()
 
     lateinit var navController: NavController
 
-    override fun onCreate(savedInstanceState: Bundle?)
-    {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -36,21 +33,24 @@ class MainActivity : AppCompatActivity()
 
         databaseHandler = DatabaseHandler(this)
 
-        runningDB = Room.databaseBuilder(applicationContext, RunDatabase::class.java, "runs").allowMainThreadQueries().build()
+        runningDB = Room.databaseBuilder(applicationContext, RunDatabase::class.java, "runs")
+            .allowMainThreadQueries().build()
         runDao = runningDB.getRunDao()
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         navController = findNavController(R.id.fragment)
-        val appBarConfiguration = AppBarConfiguration(setOf(R.id.homeFragment, R.id.workoutFragment,
-            R.id.exerciseFragment, R.id.runFragment))
-
+        val appBarConfiguration = AppBarConfiguration(
+            setOf(
+                R.id.homeFragment, R.id.workoutFragment,
+                R.id.exerciseFragment, R.id.runFragment
+            )
+        )
 
         setupActionBarWithNavController(navController, appBarConfiguration)
         bottomNavigationView.setupWithNavController(navController)
     }
 
-    override fun onContextItemSelected(item: MenuItem): Boolean
-    {
+    override fun onContextItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> {
                 finish()
@@ -60,16 +60,13 @@ class MainActivity : AppCompatActivity()
         return super.onContextItemSelected(item)
     }
 
-    override fun onNewIntent(intent: Intent?)
-    {
+    override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
         navigateToRun(intent)
     }
 
-    private fun navigateToRun(intent: Intent?)
-    {
-        if(intent?.action == "ShowTrackingFrag")
-        {
+    private fun navigateToRun(intent: Intent?) {
+        if (intent?.action == "ShowTrackingFrag") {
             navController.navigate(R.id.action_global_to_startedRunFragment)
         }
     }

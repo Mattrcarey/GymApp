@@ -25,24 +25,21 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.math.*
 
 typealias Polyline = MutableList<LatLng>
 typealias Polylines = MutableList<Polyline>
 
-class RunTracking: LifecycleService()
-{
-    var isFirstRun = true
+class RunTracking : LifecycleService() {
+    private var isFirstRun = true
 
     lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     lateinit var notificationBuilder: NotificationCompat.Builder
 
     private val timeRunInSeconds = MutableLiveData<Long>()
     private var latitude: Double = 0.0
-    private var longitude : Double = 0.0
+    private var longitude: Double = 0.0
 
-    companion object
-    {
+    companion object {
         val timeRunMilliseconds = MutableLiveData<Long>()
         val isTracking = MutableLiveData<Boolean>()
         val pathPoints = MutableLiveData<Polylines>()
@@ -50,8 +47,7 @@ class RunTracking: LifecycleService()
         val distance = MutableLiveData<Double>()
     }
 
-    private fun postInitialValues()
-    {
+    private fun postInitialValues() {
         timeRunInSeconds.postValue(0L)
         timeRunMilliseconds.postValue(0L)
         speed.postValue(0F)
@@ -60,8 +56,7 @@ class RunTracking: LifecycleService()
         pathPoints.postValue(mutableListOf())
     }
 
-    override fun onCreate()
-    {
+    override fun onCreate() {
         super.onCreate()
         postInitialValues()
         fusedLocationProviderClient = FusedLocationProviderClient(this)
@@ -71,13 +66,11 @@ class RunTracking: LifecycleService()
         })
     }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int
-    {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         intent?.let {
             when (it.action) {
                 "Start" -> {
-                    if(isFirstRun)
-                    {
+                    if (isFirstRun) {
                         startForegroundService()
                         isFirstRun = false
                     } else {
@@ -88,7 +81,7 @@ class RunTracking: LifecycleService()
                 "Pause" -> {
                     isTracking.postValue(false)
                     isTimerEnabled = false
-                    speed.postValue(0F )
+                    speed.postValue(0F)
                 }
 
                 "Stop" -> {
@@ -105,19 +98,16 @@ class RunTracking: LifecycleService()
     private var timeStarted = 0L
     private var lastSecondTimestamp = 0L
 
-    private fun startTimer()
-    {
+    private fun startTimer() {
         addEmptyPolyline()
         isTracking.postValue(true)
         timeStarted = System.currentTimeMillis()
         isTimerEnabled = true
         CoroutineScope(Dispatchers.Main).launch {
-            while(isTracking.value!!)
-            {
+            while (isTracking.value!!) {
                 lapTime = System.currentTimeMillis() - timeStarted
                 timeRunMilliseconds.postValue(timeRun + lapTime)
-                if(timeRunMilliseconds.value!! >= lastSecondTimestamp + 1000L)
-                {
+                if (timeRunMilliseconds.value!! >= lastSecondTimestamp + 1000L) {
                     timeRunInSeconds.postValue(timeRunInSeconds.value!! + 1)
                     lastSecondTimestamp += 1000L
                 }
@@ -128,10 +118,8 @@ class RunTracking: LifecycleService()
     }
 
     @SuppressLint("MissingPermission")
-    private fun updateLocationTracking(isTracking: Boolean)
-    {
-        if(isTracking)
-        {
+    private fun updateLocationTracking(isTracking: Boolean) {
+        if (isTracking) {
             val locationRequest = LocationRequest.create().apply {
                 interval = 5000
                 fastestInterval = 2000
@@ -149,8 +137,8 @@ class RunTracking: LifecycleService()
     }
 
     private fun updateNotification(isTracking: Boolean) {
-        val notificationText = if(isTracking) "Pause" else "Resume"
-        val pendingIntent = if(isTracking) {
+        val notificationText = if (isTracking) "Pause" else "Resume"
+        val pendingIntent = if (isTracking) {
             val pauseIntent = Intent(this, RunTracking::class.java).apply {
                 action = "Pause"
             }
@@ -162,7 +150,8 @@ class RunTracking: LifecycleService()
             PendingIntent.getService(this, 2, resumeIntent, FLAG_UPDATE_CURRENT)
         }
 
-        val notificationManger = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManger =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         notificationBuilder.javaClass.getDeclaredField("mActions").apply {
             isAccessible = true
@@ -180,11 +169,9 @@ class RunTracking: LifecycleService()
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
             super.onLocationResult(result)
-            if(isTracking.value!!)
-            {
+            if (isTracking.value!!) {
                 result.locations.let { locations ->
-                    for(location in locations)
-                    {
+                    for (location in locations) {
                         addPathPoint(location)
                     }
                 }
@@ -192,26 +179,24 @@ class RunTracking: LifecycleService()
         }
     }
 
-    private fun addPathPoint(location: Location?)
-    {
+    private fun addPathPoint(location: Location?) {
         location?.let {
             val position = LatLng(location.latitude, location.longitude)
             pathPoints.value?.apply {
                 last().add(position)
                 pathPoints.postValue(this)
             }
-            if (location.hasSpeed())
-            {
+            if (location.hasSpeed()) {
                 speed.postValue(location.speed)
-            } else { speed.postValue(0F ) }
+            } else {
+                speed.postValue(0F)
+            }
             updateDistance(location.latitude, location.longitude)
         }
     }
 
-    private fun updateDistance(lat: Double, long: Double)
-    {
-        if (latitude == 0.0 && longitude == 0.0)
-        {
+    private fun updateDistance(lat: Double, long: Double) {
+        if (latitude == 0.0 && longitude == 0.0) {
             latitude = lat
             longitude = long
         } else {
@@ -228,11 +213,11 @@ class RunTracking: LifecycleService()
         pathPoints.postValue(this)
     } ?: pathPoints.postValue(mutableListOf(mutableListOf()))
 
-    private fun startForegroundService()
-    {
+    private fun startForegroundService() {
         startTimer()
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         createNotificationChannel(notificationManager)
 
         notificationBuilder = NotificationCompat.Builder(this, "Tracking_Channel")
@@ -252,12 +237,11 @@ class RunTracking: LifecycleService()
         })
     }
 
-    private fun formatTime(seconds: Long) : String
-    {
-        val hours : Long = seconds / 3600
-        val minutes : Long = (seconds % 3600) / 60
-        val secondsRemaining : Long = seconds % 60
-        return String.format("%02d:%02d:%02d", hours, minutes, secondsRemaining);
+    private fun formatTime(seconds: Long): String {
+        val hours: Long = seconds / 3600
+        val minutes: Long = (seconds % 3600) / 60
+        val secondsRemaining: Long = seconds % 60
+        return String.format("%02d:%02d:%02d", hours, minutes, secondsRemaining)
     }
 
     private fun getMainActivityPendingIntent() = PendingIntent.getActivity(
@@ -269,7 +253,7 @@ class RunTracking: LifecycleService()
         FLAG_UPDATE_CURRENT
     )
 
-    private fun createNotificationChannel (notificationManger: NotificationManager) {
+    private fun createNotificationChannel(notificationManger: NotificationManager) {
         val channel = NotificationChannel("Tracking_Channel", "Tracking", IMPORTANCE_LOW)
         notificationManger.createNotificationChannel(channel)
     }

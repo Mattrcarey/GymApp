@@ -11,7 +11,6 @@ android.sourceSets.all {
 
 android {
     compileSdkVersion 31
-    //buildToolsVersion "29.0.3"
 
     defaultConfig {
         applicationId "com.example.gymapp"
@@ -19,7 +18,6 @@ android {
         targetSdkVersion 31
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 

@@ -22,5 +22,4 @@ interface RunDAO {
     @Query("SELECT SUM(run_time) FROM runs")
     fun getTotalRunTime(): LiveData<Int>
 
-
 }

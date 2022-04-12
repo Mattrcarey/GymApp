@@ -21,72 +21,65 @@ import com.example.gymapp.models.Exercises
 
 class ExerciseFragment : Fragment(), OnItemClickListener {
 
-    private var navController : NavController?= null
+    private var navController: NavController? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-        ): View
-    {
+    ): View {
         val view: View = inflater.inflate(R.layout.fragment_exercise, container, false)
-        val btnAdd : Button = view.findViewById(R.id.btnAdd)
+        val btnAdd: Button = view.findViewById(R.id.btnAdd)
         btnAdd.setOnClickListener { addRecord() }
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?)
-    {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
     }
 
 
-    override fun onItemClick(position: Int)
-    {
-        val exerciseList : ArrayList<Exercises> =  MainActivity.databaseHandler.getExercises()
-        val clickedItem : Exercises = exerciseList[position]
+    override fun onItemClick(position: Int) {
+        val exerciseList: ArrayList<Exercises> = MainActivity.databaseHandler.getExercises()
+        val clickedItem: Exercises = exerciseList[position]
         val bundle = Bundle()
         bundle.putInt("EID", clickedItem.exerciseID)
         navController?.navigate(R.id.action_exerciseFragment_to_exerciseEntry, bundle)
     }
 
-    private fun viewExercises()
-    {
+    private fun viewExercises() {
         val applicationContext = requireContext().applicationContext
-        val exercisesList : ArrayList<Exercises> =  MainActivity.databaseHandler.getExercises()
-        val adapter =  ExerciseAdapter(exercisesList, this)
-        val rv : RecyclerView = requireView().findViewById(R.id.rvItemsList)
-        rv.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false )
+        val exercisesList: ArrayList<Exercises> = MainActivity.databaseHandler.getExercises()
+        val adapter = ExerciseAdapter(exercisesList, this)
+        val rv: RecyclerView = requireView().findViewById(R.id.rvItemsList)
+        rv.layoutManager =
+            LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
         rv.adapter = adapter
     }
 
-    private fun addRecord()
-    {
+    private fun addRecord() {
         val applicationContext = activity?.applicationContext
         val etName = view?.findViewById<EditText>(R.id.etName)
         val name = etName?.text.toString()
         var error = 0
 
-        if (name.isNotEmpty())
-        {
+        if (name.isNotEmpty()) {
             val exercises = Exercises()
             exercises.exerciseName = name
-            if (applicationContext != null)
-            {
+            if (applicationContext != null) {
                 error = MainActivity.databaseHandler.addExercise(exercises).toInt()
             }
 
             etName?.text?.clear()
         } else {
             Toast.makeText(
-                    applicationContext,
-                    "Name cannot be blank",
-                    Toast.LENGTH_SHORT
+                applicationContext,
+                "Name cannot be blank",
+                Toast.LENGTH_SHORT
             ).show()
         }
 
-        if(error == -1)
-        {
+        if (error == -1) {
             Toast.makeText(
                 applicationContext,
                 "Name must be unique",
@@ -97,8 +90,7 @@ class ExerciseFragment : Fragment(), OnItemClickListener {
         viewExercises()
     }
 
-    override fun onResume()
-    {
+    override fun onResume() {
         viewExercises()
         super.onResume()
     }

@@ -23,15 +23,13 @@ import java.time.format.DateTimeFormatter
 
 class ExerciseEntry : Fragment() {
 
-    companion object
-    {
+    companion object {
         var EID: Int = 0
     }
 
-    private var navController : NavController?= null
+    private var navController: NavController? = null
 
-    override fun onCreate(savedInstanceState: Bundle?)
-    {
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setHasOptionsMenu(true)
     }
@@ -40,33 +38,30 @@ class ExerciseEntry : Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-        ): View
-    {
+    ): View {
         val view: View = inflater.inflate(R.layout.fragment_exercise_entry, container, false)
-        val btnAdd : Button = view.findViewById(R.id.btnAdd)
+        val btnAdd: Button = view.findViewById(R.id.btnAdd)
         btnAdd.setOnClickListener { addRecord() }
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?)
-    {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
         EID = arguments?.getInt("EID")!!
         viewRecords(EID)
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean
-    {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         navController?.popBackStack()
         return true
     }
 
-    private fun viewRecords(EID: Int){
+    private fun viewRecords(EID: Int) {
         val applicationContext = requireContext().applicationContext
-        val recordList : ArrayList<Records> =  MainActivity.databaseHandler.getRecords(EID)
+        val recordList: ArrayList<Records> = MainActivity.databaseHandler.getRecords(EID)
         val adapter = RecordAdapter(recordList)
-        val rv : RecyclerView = requireView().findViewById(R.id.rvRecordsList)
+        val rv: RecyclerView = requireView().findViewById(R.id.rvRecordsList)
         rv.layoutManager = LinearLayoutManager(
             applicationContext,
             LinearLayoutManager.VERTICAL,
@@ -75,8 +70,7 @@ class ExerciseEntry : Fragment() {
         rv.adapter = adapter
     }
 
-    private fun addRecord()
-    {
+    private fun addRecord() {
         val applicationContext = activity?.applicationContext
         val etWeight = view?.findViewById<EditText>(R.id.etWeight)
         val etReps = view?.findViewById<EditText>(R.id.etReps)
@@ -84,8 +78,7 @@ class ExerciseEntry : Fragment() {
         val reps = etReps?.text.toString()
         var error = 0
 
-        if(weight.toFloatOrNull() == null)
-        {
+        if (weight.toFloatOrNull() == null) {
             Toast.makeText(
                 applicationContext,
                 "weight must be a number",
@@ -94,8 +87,7 @@ class ExerciseEntry : Fragment() {
             return
         }
 
-        if(reps.toIntOrNull() == null)
-        {
+        if (reps.toIntOrNull() == null) {
             Toast.makeText(
                 applicationContext,
                 "reps must be a number",
@@ -104,8 +96,7 @@ class ExerciseEntry : Fragment() {
             return
         }
 
-        if (weight.isNotEmpty() && reps.isNotEmpty())
-        {
+        if (weight.isNotEmpty() && reps.isNotEmpty()) {
             val records = Records()
             records.weight = weight.toFloat()
             records.reps = reps.toInt()
@@ -115,8 +106,7 @@ class ExerciseEntry : Fragment() {
             records.entryDate = formatted
             records.eid = EID
 
-            if (applicationContext != null)
-            {
+            if (applicationContext != null) {
                 error = MainActivity.databaseHandler.addRecord(records).toInt()
             }
         } else {
@@ -127,8 +117,7 @@ class ExerciseEntry : Fragment() {
             ).show()
         }
 
-        if(error == -1)
-        {
+        if (error == -1) {
             Toast.makeText(
                 applicationContext,
                 "Something went wrong",
