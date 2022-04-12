@@ -256,8 +256,8 @@ class RunTracking: LifecycleService()
     {
         val hours : Long = seconds / 3600
         val minutes : Long = (seconds % 3600) / 60
-        val seconds : Long = seconds % 60
-        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        val secondsRemaining : Long = seconds % 60
+        return String.format("%02d:%02d:%02d", hours, minutes, secondsRemaining);
     }
 
     private fun getMainActivityPendingIntent() = PendingIntent.getActivity(

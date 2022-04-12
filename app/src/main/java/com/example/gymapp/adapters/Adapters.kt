@@ -42,10 +42,10 @@ class WorkoutAdapter (
 
         override fun onClick(v: View?)
         {
-            val position = adapterPosition
+            val position = bindingAdapterPosition
             if (position != RecyclerView.NO_POSITION)
             {
-                listener.onItemClick(adapterPosition)
+                listener.onItemClick(bindingAdapterPosition)
             }
         }
     }
@@ -91,10 +91,10 @@ class ExerciseAdapter(
 
         override fun onClick(v: View?)
         {
-            val position = adapterPosition
+            val position = bindingAdapterPosition
             if (position != RecyclerView.NO_POSITION)
             {
-                listener.onItemClick(adapterPosition)
+                listener.onItemClick(bindingAdapterPosition)
             }
         }
     }
@@ -140,10 +140,10 @@ class AddExerciseAdapter(
 
         override fun onClick(v: View?)
         {
-            val position = adapterPosition
+            val position = bindingAdapterPosition
             if (position != RecyclerView.NO_POSITION)
             {
-                listener.onItemClick(adapterPosition)
+                listener.onItemClick(bindingAdapterPosition)
             }
         }
     }
@@ -231,10 +231,10 @@ class RunAdapter(
 
         override fun onClick(v: View?)
         {
-            val position = adapterPosition
+            val position = bindingAdapterPosition
             if (position != RecyclerView.NO_POSITION)
             {
-                listener.onItemClick(adapterPosition)
+                listener.onItemClick(bindingAdapterPosition)
             }
         }
 

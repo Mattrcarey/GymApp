@@ -202,13 +202,9 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback
     }
 
     @SuppressLint("MissingPermission")
-    override fun onMapReady(googleMap: GoogleMap?)
+    override fun onMapReady(googleMap: GoogleMap)
     {
-        if (googleMap != null)
-        {
-            mMap = googleMap
-        }
-
+        mMap = googleMap
         mMap.uiSettings.isZoomControlsEnabled = true
         addAllPolylines()
         mMap.isMyLocationEnabled = true
