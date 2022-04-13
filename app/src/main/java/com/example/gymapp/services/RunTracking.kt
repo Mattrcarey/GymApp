@@ -83,9 +83,12 @@ class RunTracking : LifecycleService() {
                     isTimerEnabled = false
                     speed.postValue(0F)
                 }
-
                 "Stop" -> {
-                    print("PlaceHolderStop")
+                    isTimerEnabled = false
+                    isFirstRun = true
+                    postInitialValues()
+                    stopForeground(true)
+                    stopSelf()
                 }
             }
         }
@@ -202,6 +205,9 @@ class RunTracking : LifecycleService() {
         } else {
             val results = FloatArray(1)
             Location.distanceBetween(latitude, longitude, lat, long, results)
+            if (results[0] == 0F) {
+                speed.postValue(0F)
+            }
             distance.postValue(distance.value?.plus(results[0] * 0.000621371)) // weird number converts meters to miles
             latitude = lat
             longitude = long

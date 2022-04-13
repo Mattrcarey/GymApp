@@ -124,11 +124,12 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
 
         mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(bounds.build(), 25))
         mMap.snapshot { bmp ->
-            val avgSpeed = (distance / ((timeRunMilliseconds * 0.001) / 3600))
+            val avgSpeed : Double = (distance / ((timeRunMilliseconds * 0.001) / 3600))
             val dateTimeStamp = Calendar.getInstance().timeInMillis
             val run =
                 Run(bmp, dateTimeStamp, avgSpeed.toFloat(), distance.toFloat(), timeRunMilliseconds)
             MainActivity.runDao.insertRun(run)
+            finishTracking()
             navController!!.navigate(R.id.action_startedRunFragment_to_runFragment)
         }
     }
@@ -199,6 +200,12 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
 
     private fun stopTracking() {
         commandTracker("Pause")
+        latitude = 0.0
+        longitude = 0.0
+    }
+
+    private fun finishTracking() {
+        commandTracker("Stop")
         latitude = 0.0
         longitude = 0.0
     }
