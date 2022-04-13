@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.LayoutInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
@@ -25,7 +26,6 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLngBounds
 import java.util.*
-import kotlin.math.round
 
 
 class StartedRunFragment : Fragment(), OnMapReadyCallback {
@@ -46,6 +46,11 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
     private var latitude: Double = 0.0
     private var longitude: Double = 0.0
     private var distance: Double = 0.0
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -185,6 +190,11 @@ class StartedRunFragment : Fragment(), OnMapReadyCallback {
 
         subscribeToObservers()
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        navController?.popBackStack()
+        return true
     }
 
     private fun stopTracking() {

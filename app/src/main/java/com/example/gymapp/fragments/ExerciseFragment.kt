@@ -34,10 +34,9 @@ class ExerciseFragment : Fragment(), OnItemClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
+        super.onViewCreated(view, savedInstanceState)
     }
-
 
     override fun onItemClick(position: Int) {
         val exerciseList: ArrayList<Exercises> = MainActivity.databaseHandler.getExercises()

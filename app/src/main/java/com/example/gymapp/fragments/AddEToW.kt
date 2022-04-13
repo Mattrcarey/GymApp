@@ -49,10 +49,10 @@ class AddNewEToW : Fragment(), OnItemClickListener {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
         WID = arguments?.getInt("WID")!!
         getExercises()
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

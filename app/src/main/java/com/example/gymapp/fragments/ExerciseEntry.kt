@@ -46,10 +46,10 @@ class ExerciseEntry : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
         EID = arguments?.getInt("EID")!!
         viewRecords(EID)
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
